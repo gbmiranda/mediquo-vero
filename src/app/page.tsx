@@ -66,15 +66,15 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       <SiteHeader />
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-pink-500 to-pink-600 text-white pt-24">
+      <section className="relative overflow-hidden text-white pt-24" style={{ backgroundColor: '#D63066' }}>
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 right-20 w-96 h-96 bg-orange-400 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 left-20 w-96 h-96 bg-yellow-400 rounded-full blur-3xl"></div>
+          <div className="absolute top-20 right-20 w-96 h-96 rounded-full blur-3xl" style={{ backgroundColor: '#F3953F' }}></div>
+          <div className="absolute bottom-20 left-20 w-96 h-96 rounded-full blur-3xl" style={{ backgroundColor: '#FFD31B' }}></div>
         </div>
         <div className="container mx-auto px-4 py-20 md:py-28 relative z-10">
           <div className="max-w-6xl mx-auto">
             <div className="md:w-1/2">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-6" style={{ color: '#F3953F' }}>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-6" style={{ color: '#FFD31B' }}>
                 Sua saúde na palma da mão: fale com médicos em até 10 minutos
               </h1>
               <p className="text-lg md:text-xl mb-8 text-white/90">
@@ -83,7 +83,8 @@ export default function Home() {
 
               <Button
                 size="lg"
-                className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold rounded-lg h-12 text-base px-8 transition-all duration-300 shadow-lg hover:shadow-xl"
+                className="text-gray-900 font-bold rounded-lg h-12 text-base px-8 transition-all duration-300 shadow-lg hover:shadow-xl hover:opacity-90"
+                style={{ backgroundColor: '#FFD31B' }}
                 onClick={handleCTAClick}
               >
                 QUERO COMEÇAR AGORA
@@ -93,8 +94,8 @@ export default function Home() {
         </div>
         <div className="hidden md:block absolute right-0 bottom-0 w-1/2 h-full">
           <div className="relative h-full flex items-end justify-center">
-            <div className="absolute top-20 right-20 w-64 h-64 bg-orange-400 rounded-full opacity-20 blur-3xl"></div>
-            <div className="absolute bottom-20 left-20 w-72 h-72 bg-yellow-400 rounded-full opacity-20 blur-3xl"></div>
+            <div className="absolute top-20 right-20 w-64 h-64 rounded-full opacity-20 blur-3xl" style={{ backgroundColor: '#F3953F' }}></div>
+            <div className="absolute bottom-20 left-20 w-72 h-72 rounded-full opacity-20 blur-3xl" style={{ backgroundColor: '#FFD31B' }}></div>
             <Image
               src="/foto-hero.png"
               alt="Mulher sorrindo enquanto usa o aplicativo MediQuo no celular para consulta médica online - Telemedicina 24 horas"
@@ -112,11 +113,11 @@ export default function Home() {
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12" style={{ color: '#8A0138' }}>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12" style={{ color: '#8A0038' }}>
               Por que escolher a Mediquo?
             </h2>
             <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div className="flex flex-col items-center gap-6">
+              <div className="flex justify-center">
                 <Image
                   src="/foto-section-2.png"
                   alt="Mulher feliz usando smartphone para acessar consultas médicas online MediQuo - Atendimento médico 24 horas"
@@ -126,18 +127,10 @@ export default function Home() {
                   className="rounded-2xl"
                   loading="lazy"
                 />
-                <Button
-                  size="lg"
-                  className="bg-orange-400 hover:bg-orange-500 font-bold rounded-lg h-12 text-base px-8"
-                  style={{ color: '#8A0138' }}
-                  onClick={() => router.push('/cliente/login')}
-                >
-                  Quero contratar
-                </Button>
               </div>
               <div className="space-y-6">
                 <div>
-                  <h3 className="font-bold text-xl mb-3" style={{ color: '#BF0145' }}>Economia de tempo e dinheiro</h3>
+                  <h3 className="font-bold text-xl mb-3" style={{ color: '#8A0038' }}>Economia de tempo e dinheiro</h3>
                   <ul className="space-y-2">
                     <li className="text-gray-600 flex items-start gap-2">
                       <span className="text-sm">• Preço acessível e sem coparticipação</span>
@@ -155,7 +148,7 @@ export default function Home() {
                 </div>
 
                 <div>
-                  <h3 className="font-bold text-xl mb-3" style={{ color: '#BF0145' }}>Atendimento 24h, 7 dias</h3>
+                  <h3 className="font-bold text-xl mb-3" style={{ color: '#8A0038' }}>Atendimento 24h, 7 dias</h3>
                   <ul className="space-y-2">
                     <li className="text-gray-600 flex items-start gap-2">
                       <span className="text-sm">• Clínicos gerais e pediatras em até 10 min, sem triagem</span>
@@ -167,13 +160,22 @@ export default function Home() {
                 </div>
 
                 <div>
-                  <h3 className="font-bold text-xl mb-3" style={{ color: '#BF0145' }}>Médicos e especialistas</h3>
+                  <h3 className="font-bold text-xl mb-3" style={{ color: '#8A0038' }}>Médicos e especialistas</h3>
                   <ul className="space-y-2">
                     <li className="text-gray-600 flex items-start gap-2">
                       <span className="text-sm">• Clínicos gerais, pediatras, psicólogos, nutricionistas, educadores físicos, veterinários, dermatologistas e ginecologistas.</span>
                     </li>
                   </ul>
                 </div>
+
+                <Button
+                  size="lg"
+                  className="font-bold rounded-lg h-12 text-base px-8 hover:opacity-90"
+                  style={{ backgroundColor: '#F3953F', color: '#8A0038' }}
+                  onClick={() => router.push('/cliente/login')}
+                >
+                  Quero contratar
+                </Button>
               </div>
             </div>
           </div>
@@ -181,17 +183,17 @@ export default function Home() {
       </section>
 
       {/* Tabela de Serviços */}
-      <section className="py-20 bg-purple-900">
+      <section className="py-20" style={{ backgroundColor: '#8A0038' }}>
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-white">
               Nossos serviços principais
             </h2>
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-              <div className="grid grid-cols-1 md:grid-cols-3 bg-pink-600 text-white">
+              <div className="grid grid-cols-1 md:grid-cols-3 text-white" style={{ backgroundColor: '#D63066' }}>
                 <div className="p-6 text-center font-bold">Serviço</div>
-                <div className="p-6 text-center font-bold border-l border-pink-500">Como funciona</div>
-                <div className="p-6 text-center font-bold border-l border-pink-500">Benefício</div>
+                <div className="p-6 text-center font-bold border-l" style={{ borderColor: '#8A0038' }}>Como funciona</div>
+                <div className="p-6 text-center font-bold border-l" style={{ borderColor: '#8A0038' }}>Benefício</div>
               </div>
               {services.map((item, index) => (
                 <div key={index} className={`grid grid-cols-1 md:grid-cols-3 ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'} border-t`}>
@@ -209,7 +211,8 @@ export default function Home() {
             <div className="text-center mt-8">
               <Button
                 size="lg"
-                className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold rounded-lg h-12 text-base px-8"
+                className="text-gray-900 font-bold rounded-lg h-12 text-base px-8 hover:opacity-90"
+                style={{ backgroundColor: '#FFD31B' }}
                 onClick={() => router.push('/cliente/login')}
               >
                 Quero contratar
@@ -220,25 +223,26 @@ export default function Home() {
       </section>
 
       {/* Como Funciona */}
-      <section className="py-20 bg-gradient-to-br from-pink-500 to-pink-600 text-white">
+      <section className="py-20 text-white" style={{ backgroundColor: '#D63066' }}>
         <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
               Como Funciona na Prática (Em 3 Passos)
             </h2>
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div className="flex justify-center order-2 md:order-1">
+            <div className="flex flex-col md:flex-row gap-12 items-center">
+              <div className="w-full md:w-1/2 order-2 md:order-1 flex justify-center">
                 <Image
                   src="/foto-section-4.png"
                   alt="Aplicativo MediQuo no iPhone mostrando lista de médicos disponíveis para consulta online - Interface do app de telemedicina"
                   title="App MediQuo - Interface de consultas médicas online"
                   width={500}
-                  height={1000}
-                  className="drop-shadow-2xl"
+                  height={800}
+                  className="drop-shadow-2xl max-w-none"
+                  style={{  height: '800px', width: 'auto' }}
                   loading="lazy"
                 />
               </div>
-              <div className="space-y-8 order-1 md:order-2">
+              <div className="w-full md:w-1/2 order-1 md:order-2 space-y-8">
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
                   <div className="flex items-center gap-4 mb-3">
                     <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
@@ -272,7 +276,8 @@ export default function Home() {
 
                 <Button
                   size="lg"
-                  className="bg-white hover:bg-gray-100 text-pink-600 font-bold rounded-lg h-12 text-base px-8 w-full md:w-auto"
+                  className="text-white font-bold rounded-lg h-12 text-base px-8 w-full md:w-auto hover:opacity-90"
+                  style={{ backgroundColor: '#8A0038' }}
                   onClick={() => router.push('/cliente/login')}
                 >
                   Quero conhecer
@@ -284,7 +289,7 @@ export default function Home() {
       </section>
 
       {/* Depoimentos */}
-      <section className="py-20 bg-orange-400">
+      <section className="py-20" style={{ backgroundColor: '#F3953F' }}>
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-white">
@@ -322,7 +327,8 @@ export default function Home() {
             <div className="text-center mt-8">
               <Button
                 size="lg"
-                className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold rounded-lg h-12 text-base px-8"
+                className="text-gray-900 font-bold rounded-lg h-12 text-base px-8 hover:opacity-90"
+                style={{ backgroundColor: '#FFD31B' }}
                 onClick={() => router.push('/cliente/login')}
               >
                 Quero contratar
@@ -342,7 +348,7 @@ export default function Home() {
             <Card className="border-2 border-pink-200 shadow-2xl bg-white">
               <CardContent className="p-8">
                 <div className="text-center mb-6">
-                  <h3 className="text-2xl font-bold text-pink-600 mb-4">Mensal</h3>
+                  <h3 className="text-2xl font-bold mb-4" style={{ color: '#D63066' }}>Mensal</h3>
                   <p className="text-gray-700 mb-6">Médicos + todas as especialidades</p>
                   <div className="flex items-baseline justify-center gap-1">
                     <span className="text-5xl font-bold text-gray-900">R$15,90</span>
@@ -351,27 +357,28 @@ export default function Home() {
 
                 <div className="space-y-3 mb-8">
                   <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-pink-100 flex items-center justify-center flex-shrink-0">
-                      <Check className="h-4 w-4 text-pink-600" />
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#D6306620' }}>
+                      <Check className="h-4 w-4" style={{ color: '#D63066' }} />
                     </div>
                     <span className="text-gray-700">Médicos + todas as especialidades</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-pink-100 flex items-center justify-center flex-shrink-0">
-                      <Check className="h-4 w-4 text-pink-600" />
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#D6306620' }}>
+                      <Check className="h-4 w-4" style={{ color: '#D63066' }} />
                     </div>
                     <span className="text-gray-700">Dependentes menores de 18 anos</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-full bg-pink-100 flex items-center justify-center flex-shrink-0">
-                      <Check className="h-4 w-4 text-pink-600" />
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#D6306620' }}>
+                      <Check className="h-4 w-4" style={{ color: '#D63066' }} />
                     </div>
                     <span className="text-gray-700">Atendimento para cães e gatos</span>
                   </div>
                 </div>
 
                 <Button
-                  className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold rounded-lg h-14 text-lg"
+                  className="w-full text-gray-900 font-bold rounded-lg h-14 text-lg hover:opacity-90"
+                  style={{ backgroundColor: '#FFD31B' }}
                   onClick={() => router.push('/cliente/checkout')}
                 >
                   Assinar agora
@@ -384,7 +391,7 @@ export default function Home() {
       </section>
 
       {/* FAQ */}
-      <section className="py-20 bg-purple-900">
+      <section className="py-20" style={{ backgroundColor: '#D63066' }}>
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-white">
@@ -422,15 +429,16 @@ export default function Home() {
       </section>
 
       {/* CTA Final */}
-      <section className="py-20 bg-yellow-400">
+      <section className="py-20" style={{ backgroundColor: '#8A0038' }}>
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">
               Pronto para revolucionar seu cuidado com a saúde?
             </h2>
             <Button
               size="lg"
-              className="bg-pink-500 hover:bg-pink-600 text-white font-bold rounded-lg h-14 text-lg px-12 transition-all duration-300 shadow-lg hover:shadow-xl"
+              className="text-white font-bold rounded-lg h-14 text-lg px-12 transition-all duration-300 shadow-lg hover:shadow-xl hover:opacity-90"
+              style={{ backgroundColor: '#D63066' }}
               onClick={() => router.push('/cliente/login')}
             >
               Quero meu acesso agora
