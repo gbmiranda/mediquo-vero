@@ -61,14 +61,11 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/favicon.ico', sizes: 'any' },
-      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/fav-mediquo.svg', type: 'image/svg+xml' },
     ],
-    shortcut: ['/favicon.ico'],
+    shortcut: ['/fav-mediquo.svg'],
     apple: [
-      { url: '/apple-touch-icon.png', sizes: '180x180' },
+      { url: '/fav-mediquo.svg', type: 'image/svg+xml' },
     ],
   },
   verification: {
@@ -98,10 +95,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         {/* End Google Tag Manager */}
         <meta name="generator" content="v0.dev" />
         <link rel="canonical" href="https://vero.mediquo.com.br" />
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="icon" type="image/svg+xml" href="/fav-mediquo.svg" />
+        <link rel="apple-touch-icon" type="image/svg+xml" href="/fav-mediquo.svg" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#ec4899" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
