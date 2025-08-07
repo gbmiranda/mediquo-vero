@@ -1,0 +1,12 @@
+# AWS Amplify redirects for Single Page Application
+# Handle client-side routing
+
+# API routes should not be redirected
+/api/*  /api/:splat  200!
+
+# Static files should not be redirected
+/_next/*  /_next/:splat  200!
+/static/*  /static/:splat  200!
+
+# All other routes should fallback to index.html for client-side routing
+/*  /index.html  200

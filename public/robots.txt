@@ -1,0 +1,25 @@
+# MediQuo Robots.txt
+
+User-agent: *
+Allow: /
+
+# Diretórios importantes
+Allow: /images/
+Allow: /cliente/login
+
+# Bloquear áreas privadas
+Disallow: /api/
+Disallow: /cliente/atendimento
+Disallow: /cliente/checkout
+Disallow: /cliente/complete-profile
+Disallow: /auth/
+
+# Sitemap
+Sitemap: https://vero.mediquo.com.br/sitemap.xml
+
+# Crawl-delay para bots mais agressivos
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10

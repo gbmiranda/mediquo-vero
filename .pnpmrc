@@ -1,0 +1,20 @@
+# PNPM Configuration for mediquo-araujo
+# Ensures consistent behavior across development and CI environments
+
+# Auto install peer dependencies
+auto-install-peers=true
+
+# Use exact versions for better reproducibility
+save-exact=true
+
+# Prefer offline packages when available
+prefer-offline=true
+
+# Strict peer dependencies checking
+strict-peer-dependencies=false
+
+# Enable shamefully-hoist for better compatibility with some packages
+shamefully-hoist=false
+
+# Registry configuration (if needed for private packages)
+# registry=https://registry.npmjs.org/

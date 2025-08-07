@@ -1,0 +1,23 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - echo "Installing pnpm..."
+        - npm install -g pnpm@latest
+        - echo "Installing dependencies..."
+        - pnpm install --frozen-lockfile
+    build:
+      commands:
+        - echo "Building for AWS Amplify..."
+        - echo "NODE_ENV=$NODE_ENV"
+        - pnpm run build:amplify
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+      - .next/cache/**/*
+      - .pnpm-store/**/*
