@@ -97,7 +97,8 @@ export default function Home() {
             <div className="absolute bottom-20 left-20 w-72 h-72 bg-yellow-400 rounded-full opacity-20 blur-3xl"></div>
             <Image
               src="/foto-hero.png"
-              alt="Mulher sorrindo usando o app MediQuo"
+              alt="Mulher sorrindo enquanto usa o aplicativo MediQuo no celular para consulta médica online - Telemedicina 24 horas"
+              title="Consulta médica online 24h - MediQuo + Vero"
               width={600}
               height={600}
               className="relative z-10 object-contain object-bottom"
@@ -118,10 +119,12 @@ export default function Home() {
               <div className="flex flex-col items-center gap-6">
                 <Image
                   src="/foto-section-2.png"
-                  alt="Mulher sorrindo usando smartphone"
+                  alt="Mulher feliz usando smartphone para acessar consultas médicas online MediQuo - Atendimento médico 24 horas"
+                  title="Por que escolher MediQuo - Consultas médicas online rápidas"
                   width={400}
                   height={400}
                   className="rounded-2xl"
+                  loading="lazy"
                 />
                 <Button
                   size="lg"
@@ -227,10 +230,12 @@ export default function Home() {
               <div className="flex justify-center order-2 md:order-1">
                 <Image
                   src="/foto-section-4.png"
-                  alt="App MediQuo no iPhone"
+                  alt="Aplicativo MediQuo no iPhone mostrando lista de médicos disponíveis para consulta online - Interface do app de telemedicina"
+                  title="App MediQuo - Interface de consultas médicas online"
                   width={500}
                   height={1000}
                   className="drop-shadow-2xl"
+                  loading="lazy"
                 />
               </div>
               <div className="space-y-8 order-1 md:order-2">

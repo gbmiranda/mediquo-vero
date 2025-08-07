@@ -13,11 +13,11 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   metadataBase: new URL('https://vero.mediquo.com.br'),
   title: {
-    default: 'Vero + MediQuo - Sua saúde na palma da mão',
-    template: '%s | Vero + MediQuo'
+    default: 'MediQuo + Vero | Consulta Médica Online 24h em até 10 minutos - R$ 15,90',
+    template: '%s | MediQuo + Vero'
   },
-  description: 'Fale com médicos em até 10 minutos. Cuidar de você, da sua família e do seu pet nunca foi tão fácil, rápido e acessível.',
-  keywords: ['consulta médica online', 'receita online', 'médico online', 'telemedicina', 'saúde', 'atendimento médico', 'MediQuo', 'Vero', 'pets', 'veterinário online'],
+  description: 'Consulta médica online 24 horas por R$ 15,90/mês. Fale com clínicos, pediatras, psicólogos e veterinários em até 10 minutos. Inclua filhos e pets sem custo extra. Atendimento por chat, vídeo ou ligação.',
+  keywords: ['consulta médica online 24 horas', 'telemedicina 24h', 'médico online urgente', 'pediatra online 24 horas', 'psicólogo online', 'nutricionista online', 'veterinário online 24h', 'consulta médica R$ 15,90', 'MediQuo', 'Vero', 'receita médica digital', 'atendimento médico imediato', 'saúde familiar online', 'teleconsulta barata'],
   authors: [{ name: 'MediQuo' }],
   creator: 'MediQuo',
   publisher: 'MediQuo',
@@ -27,10 +27,10 @@ export const metadata: Metadata = {
     telephone: false,
   },
   openGraph: {
-    title: 'Vero + MediQuo - Sua saúde na palma da mão',
-    description: 'Fale com médicos em até 10 minutos. Cuidar de você, da sua família e do seu pet nunca foi tão fácil.',
+    title: 'MediQuo + Vero | Consulta Médica Online 24h - R$ 15,90/mês',
+    description: 'Consulta médica online 24h por apenas R$ 15,90. Clínicos, pediatras, psicólogos e veterinários em até 10 minutos. Inclua filhos e pets gratuitamente.',
     url: 'https://vero.mediquo.com.br',
-    siteName: 'Vero + MediQuo',
+    siteName: 'MediQuo + Vero',
     locale: 'pt_BR',
     type: 'website',
     images: [
@@ -44,9 +44,17 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Vero + MediQuo - Sua saúde na palma da mão',
-    description: 'Fale com médicos em até 10 minutos. Inclua filhos e pets sem custo extra.',
+    title: 'MediQuo + Vero | Consulta Médica Online 24h - R$ 15,90',
+    description: 'Consulta médica online 24 horas. Clínicos, pediatras, psicólogos e veterinários em até 10 min. Inclua filhos e pets grátis.',
     images: ['/images/og-image.png'],
+    creator: '@mediquo',
+    site: '@mediquo',
+  },
+  alternates: {
+    canonical: 'https://vero.mediquo.com.br',
+    languages: {
+      'pt-BR': 'https://vero.mediquo.com.br',
+    },
   },
   robots: {
     index: true,
@@ -69,11 +77,12 @@ export const metadata: Metadata = {
     ],
   },
   verification: {
-    google: 'google-site-verification-code',
+    google: 'aguardando-codigo-verificacao',
     other: {
       me: ['contato@mediquo.com.br'],
     },
   },
+  category: 'health',
 }
 
 export default function RootLayout({
@@ -104,40 +113,137 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "MedicalOrganization",
-              "name": "MediQuo",
-              "url": "https://vero.mediquo.com.br",
-              "logo": "https://vero.mediquo.com.br/logo.svg",
-              "description": "Consulta médica online rápida e segura",
-              "medicalSpecialty": ["Endocrinology", "InternalMedicine"],
-              "availableService": [
-                {
-                  "@type": "MedicalProcedure",
-                  "name": "Consulta Médica Online",
-                  "description": "Consulta médica online em até 10 minutos",
-                  "procedureType": "Telemedicine"
+            __html: JSON.stringify([
+              {
+                "@context": "https://schema.org",
+                "@type": "MedicalOrganization",
+                "name": "MediQuo Brasil",
+                "alternateName": "MediQuo + Vero",
+                "url": "https://vero.mediquo.com.br",
+                "logo": "https://vero.mediquo.com.br/logo-mediquo.svg",
+                "image": "https://vero.mediquo.com.br/images/og-image.png",
+                "description": "Plataforma de telemedicina 24 horas com consultas médicas online em até 10 minutos por R$ 15,90/mês",
+                "telephone": "+55-11-0000-0000",
+                "email": "contato@mediquo.com.br",
+                "address": {
+                  "@type": "PostalAddress",
+                  "addressCountry": "BR",
+                  "addressLocality": "São Paulo",
+                  "addressRegion": "SP"
                 },
-                {
-                  "@type": "MedicalProcedure",
-                  "name": "Prescrição Médica Online",
-                  "description": "Prescrição médica digital com validade em todo Brasil.",
-                  "procedureType": "Prescription"
+                "sameAs": [
+                  "https://www.instagram.com/mediquo",
+                  "https://www.facebook.com/mediquo",
+                  "https://twitter.com/mediquo"
+                ],
+                "medicalSpecialty": [
+                  "GeneralPractice",
+                  "Pediatrics", 
+                  "Psychology",
+                  "Nutrition",
+                  "Dermatology",
+                  "Gynecology",
+                  "Veterinary"
+                ],
+                "openingHoursSpecification": {
+                  "@type": "OpeningHoursSpecification",
+                  "dayOfWeek": [
+                    "Monday", "Tuesday", "Wednesday", "Thursday", 
+                    "Friday", "Saturday", "Sunday"
+                  ],
+                  "opens": "00:00",
+                  "closes": "23:59"
+                },
+                "availableService": [
+                  {
+                    "@type": "MedicalProcedure",
+                    "name": "Consulta Médica Online 24h",
+                    "description": "Atendimento com clínicos gerais 24 horas em até 10 minutos",
+                    "procedureType": "Telemedicine",
+                    "howPerformed": "Chat, vídeo ou ligação"
+                  },
+                  {
+                    "@type": "MedicalProcedure",
+                    "name": "Consulta Pediátrica Online",
+                    "description": "Pediatras disponíveis 24h para atender seu filho",
+                    "procedureType": "Telemedicine"
+                  },
+                  {
+                    "@type": "MedicalProcedure",
+                    "name": "Psicologia Online",
+                    "description": "Sessões com psicólogos especializados",
+                    "procedureType": "Telemedicine"
+                  },
+                  {
+                    "@type": "MedicalProcedure",
+                    "name": "Nutrição Online",
+                    "description": "Acompanhamento nutricional personalizado",
+                    "procedureType": "Telemedicine"
+                  },
+                  {
+                    "@type": "MedicalProcedure",
+                    "name": "Veterinário Online",
+                    "description": "Atendimento veterinário para cães e gatos",
+                    "procedureType": "Telemedicine"
+                  }
+                ],
+                "offers": {
+                  "@type": "Offer",
+                  "name": "Plano Mensal MediQuo",
+                  "price": "15.90",
+                  "priceCurrency": "BRL",
+                  "availability": "https://schema.org/InStock",
+                  "priceValidUntil": "2025-12-31",
+                  "url": "https://vero.mediquo.com.br/cliente/checkout",
+                  "description": "Acesso ilimitado a todos os especialistas + dependentes menores de 18 anos + pets"
+                },
+                "aggregateRating": {
+                  "@type": "AggregateRating",
+                  "ratingValue": "4.9",
+                  "reviewCount": "5000",
+                  "bestRating": "5",
+                  "worstRating": "1"
                 }
-              ],
-              "offers": {
-                "@type": "Offer",
-                "priceCurrency": "BRL",
-                "availability": "https://schema.org/InStock",
-                "priceValidUntil": "2025-12-31"
               },
-              "aggregateRating": {
-                "@type": "AggregateRating",
-                "ratingValue": "4.9",
-                "reviewCount": "1000"
+              {
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                "mainEntity": [
+                  {
+                    "@type": "Question",
+                    "name": "Posso incluir mais de um filho no plano MediQuo?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "Sim! Você pode incluir quantos filhos menores de 18 anos quiser, sem limites e sem custo adicional."
+                    }
+                  },
+                  {
+                    "@type": "Question",
+                    "name": "Preciso de convênio para agendar especialistas?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "Não. Todo o atendimento é feito pelo app MediQuo, sem necessidade de convênio ou burocracia."
+                    }
+                  },
+                  {
+                    "@type": "Question",
+                    "name": "Todas as especialidades precisam de agendamento?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "Não. Clínico geral, Pediatra, Veterinário e Ginecologista estão disponíveis 24h sem agendamento. Psicólogo, Nutricionista e Educador Físico precisam ser agendados."
+                    }
+                  },
+                  {
+                    "@type": "Question",
+                    "name": "Quanto custa o plano MediQuo?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "O plano mensal custa apenas R$ 15,90 e inclui acesso a todos os especialistas, além de poder incluir filhos menores de 18 anos e pets sem custo adicional."
+                    }
+                  }
+                ]
               }
-            })
+            ])
           }}
         />
       </head>
