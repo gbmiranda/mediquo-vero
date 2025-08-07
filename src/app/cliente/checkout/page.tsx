@@ -596,8 +596,8 @@ export default function CheckoutPage() {
         <main className="max-w-4xl mx-auto px-4 py-8">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Contratar consulta</h1>
-            <p className="text-gray-600 mt-2">Complete seus dados para agendar sua consulta de telemedicina</p>
+            <h1 className="text-3xl font-bold text-gray-900">Assinar Plano MediQuo</h1>
+            <p className="text-gray-600 mt-2">Complete seus dados para ativar sua assinatura mensal de telemedicina</p>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
@@ -821,7 +821,7 @@ export default function CheckoutPage() {
                           </li>
                           <li className="flex items-center">
                             <Check className="h-4 w-4 mr-2" />
-                            Consulta liberada automaticamente
+                            Plano ativado automaticamente
                           </li>
                         </ul>
                       </div>
@@ -996,19 +996,19 @@ export default function CheckoutPage() {
                   {isProcessing ? (
                     <>
                       <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                      {paymentMethod === 'pix' ? 'Gerando PIX...' : 'Processando consulta...'}
+                      {paymentMethod === 'pix' ? 'Gerando PIX...' : 'Processando assinatura...'}
                     </>
                   ) : (
                     <>
                       {paymentMethod === 'pix' ? (
                         <>
                           <QrCode className="h-5 w-5 mr-2" />
-                          Gerar PIX e contratar consulta
+                          Gerar PIX e assinar plano
                         </>
                       ) : (
                         <>
                           <Shield className="h-5 w-5 mr-2" />
-                          Confirmar consulta
+                          Confirmar assinatura
                         </>
                       )}
                     </>
@@ -1050,18 +1050,18 @@ export default function CheckoutPage() {
             <div className="lg:col-span-1">
               <Card className="sticky top-8">
                 <CardHeader>
-                  <CardTitle>Resumo do pedido</CardTitle>
+                  <CardTitle>Resumo da assinatura</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Consulta de Telemedicina</span>
-                      <span className="font-semibold whitespace-nowrap">R$ 69,90</span>
+                      <span className="text-gray-600">Plano Mensal MediQuo</span>
+                      <span className="font-semibold whitespace-nowrap">R$ 15,90/mês</span>
                     </div>
                     <hr />
                     <div className="flex justify-between text-lg font-bold">
-                      <span>Total</span>
-                      <span className="whitespace-nowrap">R$ 69,90</span>
+                      <span>Total mensal</span>
+                      <span className="whitespace-nowrap">R$ 15,90</span>
                     </div>
                   </div>
 
@@ -1070,26 +1070,35 @@ export default function CheckoutPage() {
                     <ul className="space-y-2 text-sm text-gray-600">
                       <li className="flex items-center">
                         <Check className="h-4 w-4 text-green-600 mr-2" />
-                        Consulta médica online
+                        Consultas ilimitadas 24h por dia
                       </li>
                       <li className="flex items-center">
                         <Check className="h-4 w-4 text-green-600 mr-2" />
-                        Médico especialista qualificado
+                        Médicos e especialistas
                       </li>
                       <li className="flex items-center">
                         <Check className="h-4 w-4 text-green-600 mr-2" />
-                        Atendimento em horário flexível
+                        Dependentes menores incluídos
                       </li>
                       <li className="flex items-center">
                         <Check className="h-4 w-4 text-green-600 mr-2" />
-                        Receita médica digital (se necessário)
+                        Atendimento veterinário
+                      </li>
+                      <li className="flex items-center">
+                        <Check className="h-4 w-4 text-green-600 mr-2" />
+                        Receitas digitais quando necessário
                       </li>
                     </ul>
                   </div>
 
+                  <div className="bg-yellow-50 border border-yellow-200 p-3 rounded-lg mb-3">
+                    <p className="text-xs text-yellow-800 font-medium">⚠️ Assinatura mensal recorrente</p>
+                    <p className="text-xs text-yellow-700 mt-1">Renovação automática todo mês. Cancele quando quiser sem multas.</p>
+                  </div>
+                  
                   <div className="text-xs text-gray-500">
-                    <p>✓ Pagamento seguro</p>
-                    <p>✓ Consulta válida em até 24h</p>
+                    <p>✓ Pagamento seguro e recorrente</p>
+                    <p>✓ Cancele quando quiser</p>
                     <p>✓ Suporte técnico incluído</p>
                   </div>
                 </CardContent>

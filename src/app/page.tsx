@@ -28,12 +28,11 @@ export default function Home() {
       service: 'Clínicos 24h',
       howItWorks: 'Sem triagem: fale em até 10 min',
       benefit: 'Agilidade máxima',
-      description: 'Atendimento por chat, ligação e videochamada. Sem coparticipação.'
     },
     {
       service: 'Consultas com especialistas',
-      howItWorks: 'Agende com psicólogos, nutricionistas e treinadores',
-      benefit: 'Saúde mental, física e nutricional completa'
+      howItWorks: 'Atendimento por chat, ligação e vídeochamada',
+      benefit: 'Sem coparticipação'
     },
     {
       service: 'Psicologia, Nutrição e Fitness',
@@ -113,64 +112,66 @@ export default function Home() {
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12" style={{ color: '#8A0038' }}>
-              Por que escolher a Mediquo?
-            </h2>
-            <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="grid md:grid-cols-2 gap-12 items-stretch">
               <div className="flex justify-center">
                 <Image
                   src="/foto-section-2.png"
                   alt="Mulher feliz usando smartphone para acessar consultas médicas online MediQuo - Atendimento médico 24 horas"
                   title="Por que escolher MediQuo - Consultas médicas online rápidas"
-                  width={400}
-                  height={400}
-                  className="rounded-2xl"
+                  width={500}
+                  height={500}
+                  className="rounded-2xl w-full h-auto"
                   loading="lazy"
                 />
               </div>
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-bold text-xl mb-3" style={{ color: '#8A0038' }}>Economia de tempo e dinheiro</h3>
-                  <ul className="space-y-2">
-                    <li className="text-gray-600 flex items-start gap-2">
-                      <span className="text-sm">• Preço acessível e sem coparticipação</span>
-                    </li>
-                    <li className="text-gray-600 flex items-start gap-2">
-                      <span className="text-sm">• Sem deslocamento ou fila de espera</span>
-                    </li>
-                    <li className="text-gray-600 flex items-start gap-2">
-                      <span className="text-sm">• Um valor fixo por mês, sem surpresas na fatura</span>
-                    </li>
-                    <li className="text-gray-600 flex items-start gap-2">
-                      <span className="text-sm">• Inclua filhos menores e pets sem custo extra</span>
-                    </li>
-                  </ul>
-                </div>
+              <div className="flex flex-col justify-center">
+                <div className="space-y-10">
+                  <h2 className="text-3xl md:text-4xl font-bold" style={{ color: '#8A0038' }}>
+                    Por que escolher a Mediquo?
+                  </h2>
+                  <div>
+                    <h3 className="font-bold text-xl mb-3" style={{ color: '#D63066' }}>Economia de tempo e dinheiro</h3>
+                    <ul className="space-y-2">
+                      <li className="text-gray-600 flex items-start gap-2">
+                        <span className="text-base">• Preço acessível e sem coparticipação</span>
+                      </li>
+                      <li className="text-gray-600 flex items-start gap-2">
+                        <span className="text-base">• Sem deslocamento ou fila de espera</span>
+                      </li>
+                      <li className="text-gray-600 flex items-start gap-2">
+                        <span className="text-base">• Um valor fixo por mês, sem surpresas na fatura</span>
+                      </li>
+                      <li className="text-gray-600 flex items-start gap-2">
+                        <span className="text-base">• Inclua filhos menores e pets sem custo extra</span>
+                      </li>
+                    </ul>
+                  </div>
 
-                <div>
-                  <h3 className="font-bold text-xl mb-3" style={{ color: '#8A0038' }}>Atendimento 24h, 7 dias</h3>
-                  <ul className="space-y-2">
-                    <li className="text-gray-600 flex items-start gap-2">
-                      <span className="text-sm">• Clínicos gerais e pediatras em até 10 min, sem triagem</span>
-                    </li>
-                    <li className="text-gray-600 flex items-start gap-2">
-                      <span className="text-sm">• Atendimento por ligação, mensagem ou vídeo</span>
-                    </li>
-                  </ul>
-                </div>
+                  <div>
+                    <h3 className="font-bold text-xl mb-3" style={{ color: '#D63066' }}>Atendimento 24h, 7 dias</h3>
+                    <ul className="space-y-2">
+                      <li className="text-gray-600 flex items-start gap-2">
+                        <span className="text-base">• Clínicos gerais e pediatras em até 10 min, sem triagem</span>
+                      </li>
+                      <li className="text-gray-600 flex items-start gap-2">
+                        <span className="text-base">• Atendimento por ligação, mensagem ou vídeo</span>
+                      </li>
+                    </ul>
+                  </div>
 
-                <div>
-                  <h3 className="font-bold text-xl mb-3" style={{ color: '#8A0038' }}>Médicos e especialistas</h3>
-                  <ul className="space-y-2">
-                    <li className="text-gray-600 flex items-start gap-2">
-                      <span className="text-sm">• Clínicos gerais, pediatras, psicólogos, nutricionistas, educadores físicos, veterinários, dermatologistas e ginecologistas.</span>
-                    </li>
-                  </ul>
+                  <div>
+                    <h3 className="font-bold text-xl mb-3" style={{ color: '#D63066' }}>Médicos e especialistas</h3>
+                    <ul className="space-y-2">
+                      <li className="text-gray-600 flex items-start gap-2">
+                        <span className="text-base">• Clínicos gerais, pediatras, psicólogos, nutricionistas, educadores físicos, veterinários, dermatologistas e ginecologistas.</span>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
 
                 <Button
                   size="lg"
-                  className="font-bold rounded-lg h-12 text-base px-8 hover:opacity-90"
+                  className="font-bold rounded-lg h-12 text-base px-8 hover:opacity-90 mt-10"
                   style={{ backgroundColor: '#F3953F', color: '#8A0038' }}
                   onClick={() => router.push('/cliente/login')}
                 >
@@ -199,9 +200,6 @@ export default function Home() {
                 <div key={index} className={`grid grid-cols-1 md:grid-cols-3 ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'} border-t`}>
                   <div className="p-6">
                     <div className="font-semibold text-gray-900 mb-2">{item.service}</div>
-                    {item.description && (
-                      <div className="text-sm text-gray-500">{item.description}</div>
-                    )}
                   </div>
                   <div className="p-6 text-gray-600 md:border-l">{item.howItWorks}</div>
                   <div className="p-6 text-gray-600 md:border-l">{item.benefit}</div>
@@ -227,7 +225,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-              Como Funciona na Prática (Em 3 Passos)
+              Como Funciona na Prática
             </h2>
             <div className="flex flex-col md:flex-row gap-12 items-center">
               <div className="w-full md:w-1/2 order-2 md:order-1 flex justify-center">
@@ -293,7 +291,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-white">
-              Depoimentos de Clientes (Pilot B2C)
+              Depoimentos de Clientes
             </h2>
             <div className="grid md:grid-cols-2 gap-8">
               <Card className="border-0 shadow-xl bg-white">
@@ -453,7 +451,7 @@ export default function Home() {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-6">
               <p className="mb-3 text-base">
-                MediQuo Vero – Cuidar de você, da sua família e do seu pet nunca foi tão fácil.
+                MediQuo – Cuidar de você, da sua família e do seu pet nunca foi tão fácil.
               </p>
               <div className="flex items-center justify-center gap-4 text-white/60 mb-4">
                 <div className="flex items-center gap-2">
