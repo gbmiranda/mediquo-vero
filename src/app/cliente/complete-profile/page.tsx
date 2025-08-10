@@ -19,6 +19,7 @@ import { ArrowLeft, Loader2, AlertCircle, CheckCircle } from 'lucide-react'
 import { MaskedInput } from '@/components/ui/masked-input'
 import { logger } from '@/utils/logger'
 import { toast } from '@/hooks/use-toast'
+import { checkSubscriptionStatus } from '@/services/subscription-service'
 import {
   VALIDATION_ERRORS,
   BUSINESS_ERRORS,
@@ -71,10 +72,22 @@ export default function CompleteProfile() {
         return
       }
 
-      // Se não precisa completar perfil, ir para atendimento
+      // Se não precisa completar perfil, verificar assinatura e redirecionar
       if (signupData && !signupData.needMoreInformation) {
-        logger.authFlow('Profile already complete, redirecting to atendimento')
-        router.push('/cliente/atendimento')
+        logger.authFlow('Profile already complete, checking subscription')
+        const checkAndRedirect = async () => {
+          if (signupData.id) {
+            const subStatus = await checkSubscriptionStatus(signupData.id.toString())
+            if (subStatus.success && subStatus.data?.active) {
+              router.push('/cliente/assinatura')
+            } else {
+              router.push('/cliente/checkout')
+            }
+          } else {
+            router.push('/cliente/checkout')
+          }
+        }
+        checkAndRedirect()
         return
       }
 
@@ -204,12 +217,20 @@ export default function CompleteProfile() {
       if (result.success) {
         setSuccess(true)
 
-        // Redirecionar para atendimento após sucesso
-        const redirectPath = '/cliente/atendimento'
+        logger.authFlow('Profile completion successful, checking subscription')
 
-        logger.authFlow('Profile completion successful, redirecting', {
-          redirectPath
-        })
+        // Verificar status da assinatura
+        let redirectPath = '/cliente/checkout'
+        
+        if (signupData?.id) {
+          const subStatus = await checkSubscriptionStatus(signupData.id.toString())
+          if (subStatus.success && subStatus.data?.active) {
+            // Tem assinatura ativa, vai para gerenciamento
+            redirectPath = '/cliente/assinatura'
+          }
+        }
+
+        logger.authFlow('Redirecting after profile completion', { redirectPath })
 
         // Aguardar um pouco para mostrar sucesso, depois redirecionar
         setTimeout(() => {

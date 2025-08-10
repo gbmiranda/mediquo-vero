@@ -17,6 +17,7 @@ import { SiteHeader } from '@/components/site-header'
 import { Loader2, Mail, ArrowLeft } from 'lucide-react'
 import { logger } from '@/utils/logger'
 import { toast } from '@/hooks/use-toast'
+import { checkSubscriptionStatus } from '@/services/subscription-service'
 import {
   VALIDATION_ERRORS,
   AUTH_ERRORS,
@@ -57,7 +58,20 @@ export default function LoginPage() {
       if (signupData.needMoreInformation) {
         router.push('/cliente/complete-profile')
       } else {
-        router.push('/cliente/atendimento')
+        // Verificar status da assinatura para redirecionar corretamente
+        const checkAndRedirect = async () => {
+          if (signupData.id) {
+            const subStatus = await checkSubscriptionStatus(signupData.id.toString())
+            if (subStatus.success && subStatus.data?.active) {
+              router.push('/cliente/assinatura')
+            } else {
+              router.push('/cliente/checkout')
+            }
+          } else {
+            router.push('/cliente/checkout')
+          }
+        }
+        checkAndRedirect()
       }
     }
   }, [token, signupData, router])
@@ -134,13 +148,25 @@ export default function LoginPage() {
       const result = await validateOTP(emailInput, otpCode)
 
       if (result.success) {
-        logger.authFlow('OTP validation successful, redirecting')
+        logger.authFlow('OTP validation successful, checking subscription')
 
         // Verificar se precisa completar perfil
         if (signupData?.needMoreInformation) {
           router.push('/cliente/complete-profile')
         } else {
-          router.push('/cliente/checkout')
+          // Verificar status da assinatura
+          if (signupData?.id) {
+            const subStatus = await checkSubscriptionStatus(signupData.id.toString())
+            if (subStatus.success && subStatus.data?.active) {
+              // Tem assinatura ativa, vai para gerenciamento
+              router.push('/cliente/assinatura')
+            } else {
+              // Não tem assinatura, vai para checkout
+              router.push('/cliente/checkout')
+            }
+          } else {
+            router.push('/cliente/checkout')
+          }
         }
       } else {
         const errorMsg = result.error || 'Código de verificação inválido'

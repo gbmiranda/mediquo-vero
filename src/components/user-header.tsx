@@ -7,7 +7,9 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
-import { LogOut, User, ChevronDown, ShoppingBag } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { LogOut, User, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -18,7 +20,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import ProfileDialog from '@/components/profile-dialog'
-import OrdersDialog from './orders-dialog'
 
 interface UserHeaderProps {
   className?: string
@@ -29,7 +30,6 @@ export function UserHeader({ className = '' }: UserHeaderProps) {
   const { userData, signupData, email, logout } = useAuth()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false)
-  const [isOrdersDialogOpen, setIsOrdersDialogOpen] = useState(false)
 
   // Tentar obter o nome do usuário de diferentes fontes
   const getUserName = () => {
@@ -62,25 +62,52 @@ export function UserHeader({ className = '' }: UserHeaderProps) {
   }
 
   return (
-    <div className={`flex items-center gap-4 ${className}`}>
-      <div className="text-sm text-gray-600">
-        Olá!
-      </div>
+    <header className="fixed top-0 left-0 right-0 z-50 shadow-lg" style={{ backgroundColor: '#D63066' }}>
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-20">
+          {/* Logo Section */}
+          <Link href="/" className="flex items-center gap-3">
+            <div className="relative w-20 h-6">
+              <Image 
+                src="/logo-vero.svg" 
+                alt="Vero" 
+                fill
+                className="object-contain brightness-0 invert"
+                priority
+              />
+            </div>
+            <span className="text-white text-2xl font-light">+</span>
+            <div className="relative w-24 h-5">
+              <Image 
+                src="/logo-mediquo.svg" 
+                alt="MediQuo" 
+                fill
+                className="object-contain brightness-0 invert"
+                priority
+              />
+            </div>
+          </Link>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="flex items-center gap-2 hover:bg-gray-100">
-            <Avatar className="h-8 w-8">
-              <AvatarFallback className="bg-blue-600 text-white text-xs">
-                {getUserInitials()}
-              </AvatarFallback>
-            </Avatar>
-            <span className="font-medium text-gray-900">
-              {getUserName()}
-            </span>
-            <ChevronDown className="h-4 w-4 text-gray-500" />
-          </Button>
-        </DropdownMenuTrigger>
+          {/* User Menu Section */}
+          <div className="flex items-center gap-4">
+            <div className="text-sm text-white">
+              Olá!
+            </div>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="flex items-center gap-2 hover:bg-white/10 text-white">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-white text-pink-600 text-xs font-semibold">
+                      {getUserInitials()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="font-medium">
+                    {getUserName()}
+                  </span>
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
 
         <DropdownMenuContent align="end" className="w-56">
           <div className="px-3 py-2">
@@ -102,14 +129,6 @@ export function UserHeader({ className = '' }: UserHeaderProps) {
             Meu Perfil
           </DropdownMenuItem>
 
-          <DropdownMenuItem
-            onClick={() => setIsOrdersDialogOpen(true)}
-            className="cursor-pointer"
-          >
-            <ShoppingBag className="h-4 w-4 mr-2" />
-            Meus Pedidos
-          </DropdownMenuItem>
-
           <DropdownMenuSeparator />
 
           <DropdownMenuItem
@@ -122,18 +141,15 @@ export function UserHeader({ className = '' }: UserHeaderProps) {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+          </div>
+        </div>
+      </div>
 
       {/* Profile Dialog */}
       <ProfileDialog
         open={isProfileDialogOpen}
         onOpenChange={setIsProfileDialogOpen}
       />
-
-      {/* Orders Dialog */}
-      <OrdersDialog
-        open={isOrdersDialogOpen}
-        onOpenChange={setIsOrdersDialogOpen}
-      />
-    </div>
+    </header>
   )
 }

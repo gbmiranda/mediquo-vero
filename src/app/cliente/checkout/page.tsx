@@ -10,9 +10,9 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/auth-context'
 import { getUserProfile } from '@/services/user-service'
-import { processCardTransaction, processPixTransaction } from '@/services/checkout-service'
+import { processCardTransaction } from '@/services/checkout-service'
 import { getAddressByCep, validateCep, formatCep } from '@/services/address-service'
-import { ArrowLeft, CreditCard, Shield, Check, Loader2, QrCode, Copy } from 'lucide-react'
+import { ArrowLeft, CreditCard, Shield, Check, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { MaskedInput } from '@/components/ui/masked-input'
@@ -54,13 +54,7 @@ export default function CheckoutPage() {
   const [paymentError, setPaymentError] = useState('')
   const [isPaymentSuccess, setIsPaymentSuccess] = useState(false)
   const [redirectCountdown, setRedirectCountdown] = useState(10)
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'pix'>('card')
-  const [pixData, setPixData] = useState<{
-    qrcodeUrl: string
-    pixCode: string
-    id: number
-  } | null>(null)
-  const [showPixModal, setShowPixModal] = useState(false)
+  // Payment is always by credit card for subscriptions
 
   // Ref para focar no campo número após busca do CEP
   const numberInputRef = useRef<HTMLInputElement>(null)
@@ -282,36 +276,6 @@ export default function CheckoutPage() {
     }))
   }
 
-  const copyPixCode = async () => {
-    if (pixData?.pixCode) {
-      try {
-        await navigator.clipboard.writeText(pixData.pixCode)
-        logger.authFlow('PIX code copied to clipboard')
-      } catch (error) {
-        logger.authError('Failed to copy PIX code', error)
-      }
-    }
-  }
-
-  const handlePixPaymentConfirmed = () => {
-    setShowPixModal(false)
-    setIsPaymentSuccess(true)
-
-    // Iniciar countdown de 10 segundos
-    let countdown = 10
-    setRedirectCountdown(countdown)
-
-    const countdownInterval = setInterval(() => {
-      countdown--
-      setRedirectCountdown(countdown)
-
-      if (countdown <= 0) {
-        clearInterval(countdownInterval)
-        logger.authFlow('Countdown finished, redirecting to start consultation')
-        router.push('/cliente/atendimento')
-      }
-    }, 1000)
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -322,51 +286,45 @@ export default function CheckoutPage() {
       logger.authFlow('Processing checkout payment')
 
       // Preparar dados do endereço (apenas para cartão)
-      let addressData = null
-      if (paymentMethod === 'card') {
-        addressData = {
-          line_1: `${formData.address}, ${formData.complement || ''}`.trim(),
-          line_2: formData.number || '',
-          neighborhood: formData.neighborhood,
-          zip_code: formData.zipCode.replace(/\D/g, ''), // Remove máscara
-          city: formData.city,
-          state: formData.state,
-          country: 'BR'
-        }
+      const addressData = {
+        line_1: `${formData.address}, ${formData.complement || ''}`.trim(),
+        line_2: formData.number || '',
+        neighborhood: formData.neighborhood,
+        zip_code: formData.zipCode.replace(/\D/g, ''), // Remove máscara
+        city: formData.city,
+        state: formData.state,
+        country: 'BR'
       }
 
       // Preparar dados do cartão (apenas para cartão)
-      let cardData = null
-      if (paymentMethod === 'card') {
-        const [expMonth, expYear] = formData.expiryDate.split('/')
-        const expYearNumber = parseInt(expYear, 10)
-        const fullYear = expYearNumber < 100 ? expYearNumber + 2000 : expYearNumber // Suporte para YY e YYYY
+      const [expMonth, expYear] = formData.expiryDate.split('/')
+      const expYearNumber = parseInt(expYear, 10)
+      const fullYear = expYearNumber < 100 ? expYearNumber + 2000 : expYearNumber // Suporte para YY e YYYY
 
-        cardData = {
-          number: formData.cardNumber.replace(/\s/g, ''), // Remove espaços
-          holder_name: formData.cardName,
-          holder_document: formData.cpf.replace(/\D/g, ''), // Remove máscara
-          exp_month: parseInt(expMonth, 10),
-          exp_year: fullYear,
-          cvv: formData.cvv
-        }
+      const cardData = {
+        number: formData.cardNumber.replace(/\s/g, ''), // Remove espaços
+        holder_name: formData.cardName,
+        holder_document: formData.cpf.replace(/\D/g, ''), // Remove máscara
+        exp_month: parseInt(expMonth, 10),
+        exp_year: fullYear,
+        cvv: formData.cvv
+      }
 
-        // Validar data de validade do cartão
-        const expiryValidation = validateCardExpiry(parseInt(expMonth, 10), fullYear)
-        if (!expiryValidation.isValid) {
-          throw new Error(expiryValidation.error || 'Data de validade inválida')
-        }
+      // Validar data de validade do cartão
+      const expiryValidation = validateCardExpiry(parseInt(expMonth, 10), fullYear)
+      if (!expiryValidation.isValid) {
+        throw new Error(expiryValidation.error || 'Data de validade inválida')
+      }
 
-        // Validar dados obrigatórios do cartão
-        if (!cardData.number || !cardData.holder_name || !cardData.holder_document ||
-            !cardData.exp_month || !cardData.exp_year || !cardData.cvv) {
-          throw new Error('Dados do cartão incompletos')
-        }
+      // Validar dados obrigatórios do cartão
+      if (!cardData.number || !cardData.holder_name || !cardData.holder_document ||
+          !cardData.exp_month || !cardData.exp_year || !cardData.cvv) {
+        throw new Error('Dados do cartão incompletos')
+      }
 
-        // Validar dados obrigatórios do endereço para cartão
-        if (!addressData || !addressData.line_1 || !addressData.zip_code || !addressData.city || !addressData.state || !addressData.neighborhood) {
-          throw new Error('Dados do endereço incompletos')
-        }
+      // Validar dados obrigatórios do endereço para cartão
+      if (!addressData || !addressData.line_1 || !addressData.zip_code || !addressData.city || !addressData.state || !addressData.neighborhood) {
+        throw new Error('Dados do endereço incompletos')
       }
 
       // Validar se temos o ID do usuário
@@ -374,26 +332,8 @@ export default function CheckoutPage() {
         throw new Error('ID do usuário não encontrado')
       }
 
-      // Processar pagamento baseado no método
-      let result
-      if (paymentMethod === 'card') {
-        result = await processCardTransactionHandler(cardData, addressData, signupData.id.toString())
-      } else {
-        // Processar PIX
-        const pixResult = await processPixTransaction(signupData.id.toString())
-        if (pixResult.success && pixResult.data) {
-          setPixData({
-            qrcodeUrl: pixResult.data.qrcodeUrl,
-            pixCode: pixResult.data.pixCode,
-            id: pixResult.data.id
-          })
-          setShowPixModal(true)
-          setIsProcessing(false)
-          return // Não continuar com o fluxo normal
-        } else {
-          result = pixResult
-        }
-      }
+      // Process credit card payment for subscription
+      const result = await processCardTransactionHandler(cardData, addressData, signupData.id.toString())
 
       if (result.success) {
         logger.authFlow('Payment processed successfully, starting countdown before redirect')
@@ -409,8 +349,8 @@ export default function CheckoutPage() {
 
           if (countdown <= 0) {
             clearInterval(countdownInterval)
-            logger.authFlow('Countdown finished, redirecting to start consultation')
-            router.push('/cliente/atendimento')
+            logger.authFlow('Countdown finished, redirecting to subscription management')
+            router.push('/cliente/assinatura')
           }
         }, 1000)
       } else {
@@ -471,89 +411,6 @@ export default function CheckoutPage() {
 
   return (
     <>
-      {/* Modal do PIX */}
-      {showPixModal && pixData && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-8 rounded-lg shadow-lg text-center max-w-md mx-4">
-            <div className="mb-4">
-              <QrCode className="h-16 w-16 text-blue-600 mx-auto" />
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              PIX Gerado!
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Escaneie o QR Code ou copie e cole o código PIX no seu aplicativo do banco
-            </p>
-
-            {/* QR Code */}
-            <div className="mb-6">
-              <img
-                src={pixData.qrcodeUrl}
-                alt="QR Code PIX"
-                className="mx-auto border rounded-lg"
-                style={{ maxWidth: '200px', maxHeight: '200px' }}
-              />
-            </div>
-
-            {/* Código PIX */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Código PIX:
-              </label>
-              <div className="flex items-center space-x-2">
-                <input
-                  type="text"
-                  value={pixData.pixCode}
-                  readOnly
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm bg-gray-50"
-                />
-                <Button
-                  onClick={copyPixCode}
-                  variant="outline"
-                  size="sm"
-                  className="flex-shrink-0"
-                >
-                  <Copy className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            {/* Informações importantes */}
-            <div className="mb-6 text-left">
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
-                <p className="text-sm text-orange-800">
-                  <strong>Importante:</strong>
-                </p>
-                <ul className="text-xs text-orange-700 mt-1 space-y-1">
-                  <li>• O PIX expira em 30 minutos</li>
-                  <li>• Valor: R$ 69,90</li>
-                  <li>• Após o pagamento, clique em "Já fiz o pagamento"</li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Botões */}
-            <div className="space-y-3">
-              <Button
-                onClick={handlePixPaymentConfirmed}
-                size="lg"
-                className="w-full"
-              >
-                <Check className="h-5 w-5 mr-2" />
-                Já fiz o pagamento
-              </Button>
-              <Button
-                onClick={() => setShowPixModal(false)}
-                variant="outline"
-                size="lg"
-                className="w-full"
-              >
-                Cancelar
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Modal de sucesso do pagamento */}
       {isPaymentSuccess && (
@@ -563,13 +420,10 @@ export default function CheckoutPage() {
               <Check className="h-16 w-16 text-green-600 mx-auto" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              {paymentMethod === 'pix' ? 'PIX confirmado!' : 'Processando pagamento!'}
+              Assinatura confirmada!
             </h2>
             <p className="text-gray-600 mb-6">
-              {paymentMethod === 'pix'
-                ? 'Pagamento PIX confirmado! Sua consulta foi contratada com sucesso.'
-                : 'Sua consulta foi contratada com sucesso. Aguarde enquanto processamos sua solicitação...'
-              }
+              Sua assinatura mensal foi ativada com sucesso. Aguarde enquanto processamos sua solicitação...
             </p>
             <div className="flex items-center justify-center space-x-2">
               <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
@@ -582,18 +436,9 @@ export default function CheckoutPage() {
       )}
 
       <div className="min-h-screen bg-gray-50">
-        <header className="bg-white shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex justify-between items-center">
-              <Link href="/" className="flex items-center">
-                <img src="/logo.svg" alt="MediQuo" className="h-8" />
-              </Link>
-              <UserHeader />
-            </div>
-          </div>
-        </header>
+        <UserHeader />
 
-        <main className="max-w-4xl mx-auto px-4 py-8">
+        <main className="max-w-4xl mx-auto px-4 py-8 pt-28">
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900">Assinar Plano MediQuo</h1>
@@ -663,70 +508,22 @@ export default function CheckoutPage() {
                 {/* Método de Pagamento */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Método de pagamento</CardTitle>
+                    <CardTitle className="flex items-center">
+                      <CreditCard className="h-5 w-5 mr-2" />
+                      Pagamento por Cartão de Crédito
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Opção Cartão de Crédito */}
-                      <div
-                        className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                          paymentMethod === 'card'
-                            ? 'border-pink-500 bg-pink-50'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                        onClick={() => setPaymentMethod('card')}
-                      >
-                        <div className="flex items-center space-x-3">
-                          <div className={`w-4 h-4 rounded-full border-2 ${
-                            paymentMethod === 'card'
-                              ? 'border-pink-500 bg-pink-500'
-                              : 'border-gray-300'
-                          }`}>
-                            {paymentMethod === 'card' && (
-                              <div className="w-2 h-2 bg-white rounded-full mx-auto mt-0.5" />
-                            )}
-                          </div>
-                          <CreditCard className="h-5 w-5 text-gray-600" />
-                          <div>
-                            <p className="font-medium">Cartão de Crédito</p>
-                            <p className="text-sm text-gray-500">Pagamento na hora</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Opção PIX */}
-                      <div
-                        className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                          paymentMethod === 'pix'
-                            ? 'border-pink-500 bg-pink-50'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                        onClick={() => setPaymentMethod('pix')}
-                      >
-                        <div className="flex items-center space-x-3">
-                          <div className={`w-4 h-4 rounded-full border-2 ${
-                            paymentMethod === 'pix'
-                              ? 'border-pink-500 bg-pink-500'
-                              : 'border-gray-300'
-                          }`}>
-                            {paymentMethod === 'pix' && (
-                              <div className="w-2 h-2 bg-white rounded-full mx-auto mt-0.5" />
-                            )}
-                          </div>
-                          <QrCode className="h-5 w-5 text-gray-600" />
-                          <div>
-                            <p className="font-medium">PIX</p>
-                            <p className="text-sm text-gray-500">Instantâneo</p>
-                          </div>
-                        </div>
-                      </div>
+                  <CardContent>
+                    <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+                      <p className="text-sm text-blue-800">
+                        <strong>Assinatura mensal recorrente:</strong> Seu cartão será cobrado mensalmente no valor de R$ 15,90. Você pode cancelar a qualquer momento.
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Dados do Cartão - Condicional */}
-                {paymentMethod === 'card' && (
-                  <Card>
+                {/* Dados do Cartão */}
+                <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center">
                         <CreditCard className="h-5 w-5 mr-2" />
@@ -744,7 +541,7 @@ export default function CheckoutPage() {
                             value={formData.cardNumber}
                             onChange={handleInputChange}
                             placeholder="1234 5678 9012 3456"
-                            required={paymentMethod === 'card'}
+                            required
                             disabled={isProcessing}
                           />
                         </div>
@@ -758,7 +555,7 @@ export default function CheckoutPage() {
                             value={formData.expiryDate}
                             onChange={handleInputChange}
                             placeholder="MM/AA"
-                            required={paymentMethod === 'card'}
+                            required
                             disabled={isProcessing}
                           />
                         </div>
@@ -772,7 +569,7 @@ export default function CheckoutPage() {
                             value={formData.cvv}
                             onChange={handleInputChange}
                             placeholder="123"
-                            required={paymentMethod === 'card'}
+                            required
                             disabled={isProcessing}
                           />
                         </div>
@@ -785,59 +582,16 @@ export default function CheckoutPage() {
                             value={formData.cardName}
                             onChange={handleInputChange}
                             placeholder="Nome como está no cartão"
-                            required={paymentMethod === 'card'}
+                            required
                             disabled={isProcessing}
                           />
                         </div>
                       </div>
                     </CardContent>
-                  </Card>
-                )}
+                </Card>
 
-                {/* Informações do PIX - Condicional */}
-                {paymentMethod === 'pix' && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center">
-                        <QrCode className="h-5 w-5 mr-2" />
-                        Pagamento via PIX
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="bg-pink-50 p-4 rounded-lg">
-                        <h3 className="font-medium text-blue-900 mb-2">Como funciona o PIX:</h3>
-                        <ul className="space-y-1 text-sm text-blue-800">
-                          <li className="flex items-center">
-                            <Check className="h-4 w-4 mr-2" />
-                            Após confirmar, você receberá um QR Code
-                          </li>
-                          <li className="flex items-center">
-                            <Check className="h-4 w-4 mr-2" />
-                            Escaneie com seu banco ou copie e cole a chave
-                          </li>
-                          <li className="flex items-center">
-                            <Check className="h-4 w-4 mr-2" />
-                            Pagamento processado instantaneamente
-                          </li>
-                          <li className="flex items-center">
-                            <Check className="h-4 w-4 mr-2" />
-                            Plano ativado automaticamente
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div className="border border-orange-200 bg-orange-50 p-4 rounded-lg">
-                        <p className="text-sm text-orange-800">
-                          <strong>Importante:</strong> O PIX expira em 30 minutos. Certifique-se de efetuar o pagamento dentro deste prazo.
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {/* Endereço - Condicional para cartão */}
-                {paymentMethod === 'card' && (
-                  <Card>
+                {/* Endereço de cobrança */}
+                <Card>
                     <CardHeader>
                       <CardTitle>Endereço de cobrança</CardTitle>
                     </CardHeader>
@@ -858,7 +612,7 @@ export default function CheckoutPage() {
                             value={formData.zipCode}
                             onChange={handleCepChange}
                             placeholder="00000-000"
-                            required={paymentMethod === 'card'}
+                            required
                             disabled={isProcessing}
                           />
                           {cepError && (
@@ -877,7 +631,7 @@ export default function CheckoutPage() {
                             value={formData.address}
                             onChange={handleInputChange}
                             placeholder="Rua, Avenida, etc."
-                            required={paymentMethod === 'card'}
+                            required
                             disabled={isProcessing}
                           />
                         </div>
@@ -892,7 +646,7 @@ export default function CheckoutPage() {
                             value={formData.number}
                             onChange={handleInputChange}
                             placeholder="123"
-                            required={paymentMethod === 'card'}
+                            required
                             disabled={isProcessing}
                           />
                         </div>
@@ -920,7 +674,7 @@ export default function CheckoutPage() {
                           value={formData.neighborhood}
                           onChange={handleInputChange}
                           placeholder="Bairro"
-                          required={paymentMethod === 'card'}
+                          required
                           disabled={isProcessing}
                         />
                       </div>
@@ -935,7 +689,7 @@ export default function CheckoutPage() {
                             value={formData.city}
                             onChange={handleInputChange}
                             placeholder="Cidade"
-                            required={paymentMethod === 'card'}
+                            required
                             disabled={isProcessing}
                           />
                         </div>
@@ -948,7 +702,7 @@ export default function CheckoutPage() {
                             value={formData.state}
                             onChange={handleInputChange}
                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            required={paymentMethod === 'card'}
+                            required
                             disabled={isProcessing}
                           >
                             <option value="">Selecione</option>
@@ -983,8 +737,7 @@ export default function CheckoutPage() {
                         </div>
                       </div>
                     </CardContent>
-                  </Card>
-                )}
+                </Card>
 
                 {/* Botão de Finalizar */}
                 <Button
@@ -996,21 +749,12 @@ export default function CheckoutPage() {
                   {isProcessing ? (
                     <>
                       <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                      {paymentMethod === 'pix' ? 'Gerando PIX...' : 'Processando assinatura...'}
+                      Processando assinatura...
                     </>
                   ) : (
                     <>
-                      {paymentMethod === 'pix' ? (
-                        <>
-                          <QrCode className="h-5 w-5 mr-2" />
-                          Gerar PIX e assinar plano
-                        </>
-                      ) : (
-                        <>
-                          <Shield className="h-5 w-5 mr-2" />
-                          Confirmar assinatura
-                        </>
-                      )}
+                      <Shield className="h-5 w-5 mr-2" />
+                      Confirmar assinatura
                     </>
                   )}
                 </Button>
