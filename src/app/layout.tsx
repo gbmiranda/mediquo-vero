@@ -113,10 +113,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify([
-              {
-                "@context": "https://schema.org",
-                "@type": "MedicalOrganization",
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "MedicalOrganization",
                 "name": "MediQuo Brasil",
                 "alternateName": "MediQuo + Vero",
                 "url": "https://vero.mediquo.com.br",
@@ -204,10 +205,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   "bestRating": "5",
                   "worstRating": "1"
                 }
-              },
-              {
-                "@context": "https://schema.org",
-                "@type": "FAQPage",
+                },
+                {
+                  "@type": "FAQPage",
                 "mainEntity": [
                   {
                     "@type": "Question",
@@ -243,7 +243,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   }
                 ]
               }
-            ])
+              ]
+            })
           }}
         />
       </head>

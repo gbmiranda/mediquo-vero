@@ -1,10 +1,9 @@
 "use client"
 
-import { useSearchParams } from "next/navigation"
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { AlertTriangle, RefreshCw, Home, HelpCircle } from "lucide-react"
-import { AUTH_ERRORS } from "@/config/error-messages"
+import { AlertTriangle, HelpCircle, Home, RefreshCw } from "lucide-react"
+import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 
 export default function AuthError() {
   const searchParams = useSearchParams()
@@ -138,7 +137,7 @@ export default function AuthError() {
 
       <footer className="bg-white py-4 border-t border-gray-100">
         <div className="container mx-auto px-4 text-center text-sm text-[#4a4a68]">
-          © 2024 Mediquo. Todos os direitos reservados.
+          © 2025 Mediquo. Todos os direitos reservados.
         </div>
       </footer>
     </div>

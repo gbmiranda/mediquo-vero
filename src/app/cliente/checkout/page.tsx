@@ -5,21 +5,20 @@
 // PÁGINA DE CHECKOUT - MEDIQUO ARAUJO
 // ===================================================================
 
-import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { useAuth } from '@/contexts/auth-context'
-import { getUserProfile } from '@/services/user-service'
-import { processCardTransaction } from '@/services/checkout-service'
-import { getAddressByCep, validateCep, formatCep } from '@/services/address-service'
-import { ArrowLeft, CreditCard, Shield, Check, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { MaskedInput } from '@/components/ui/masked-input'
 import { Label } from '@/components/ui/label'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { MaskedInput } from '@/components/ui/masked-input'
 import { UserHeader } from '@/components/user-header'
+import { useAuth } from '@/contexts/auth-context'
+import { getAddressByCep, validateCep } from '@/services/address-service'
+import { processCardTransaction } from '@/services/checkout-service'
+import { getUserProfile } from '@/services/user-service'
 import { logger } from '@/utils/logger'
+import { Check, CreditCard, Loader2, Shield } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -854,7 +853,7 @@ export default function CheckoutPage() {
         <footer className="bg-white border-t mt-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <p className="text-center text-sm text-gray-600">
-              © 2024 Vero + MediQuo. Todos os direitos reservados.
+              © 2025 Vero + MediQuo. Todos os direitos reservados.
             </p>
           </div>
         </footer>

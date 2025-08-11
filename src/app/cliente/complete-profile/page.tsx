@@ -5,28 +5,26 @@
 // PÁGINA DE COMPLETAR PERFIL - MEDIQUO ARAUJO
 // ===================================================================
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { useAuth } from '@/contexts/auth-context'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { ArrowLeft, Loader2, AlertCircle, CheckCircle } from 'lucide-react'
 import { MaskedInput } from '@/components/ui/masked-input'
-import { logger } from '@/utils/logger'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { UserHeader } from '@/components/user-header'
+import {
+  BUSINESS_ERRORS,
+  VALIDATION_ERRORS,
+  formatErrorForToast
+} from '@/config/error-messages'
+import { useAuth } from '@/contexts/auth-context'
 import { toast } from '@/hooks/use-toast'
 import { checkSubscriptionStatus } from '@/services/subscription-service'
-import {
-  VALIDATION_ERRORS,
-  BUSINESS_ERRORS,
-  NETWORK_ERRORS,
-  formatErrorForToast,
-  formatSuccessForToast
-} from '@/config/error-messages'
+import { logger } from '@/utils/logger'
+import { AlertCircle, CheckCircle, Loader2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 // ===================================================================
 // COMPONENTE PRINCIPAL
@@ -281,17 +279,9 @@ export default function CompleteProfile() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-center">
-            <Link href="/" className="flex items-center">
-              <img src="/logo.svg" alt="MediQuo" className="h-8" />
-            </Link>
-          </div>
-        </div>
-      </header>
+      <UserHeader />
 
-      <main className="flex items-center justify-center py-12 px-4">
+      <main className="flex items-center justify-center py-12 px-4 pt-28">
         <div className="max-w-md w-full">
           <Card>
             <CardHeader>
@@ -412,14 +402,6 @@ export default function CompleteProfile() {
           </Card>
         </div>
       </main>
-
-      <footer className="bg-white border-t">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <p className="text-center text-sm text-gray-600">
-            © 2024 Vero + MediQuo. Todos os direitos reservados.
-          </p>
-        </div>
-      </footer>
     </div>
   )
 }

@@ -1,28 +1,26 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 // import { useRouter } from 'next/navigation' // Comentado temporariamente
-import { useAuth } from '@/contexts/auth-context'
-import {
-  getSubscriptionDetails,
-  getPaymentHistory,
-  cancelSubscription,
-  SubscriptionDetails,
-  PaymentHistoryItem
-} from '@/services/subscription-service'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { UserHeader } from '@/components/user-header'
+import { useAuth } from '@/contexts/auth-context'
 import {
-  Calendar,
-  CreditCard,
+  PaymentHistoryItem,
+  SubscriptionDetails
+} from '@/services/subscription-service'
+import {
   AlertCircle,
+  Calendar,
   CheckCircle,
+  Copy,
+  CreditCard,
+  Key,
   Loader2,
   XCircle
 } from 'lucide-react'
-import { logger } from '@/utils/logger'
 
 export default function AssinaturaPage() {
   // const router = useRouter() // Comentado temporariamente
@@ -34,6 +32,7 @@ export default function AssinaturaPage() {
   const [isCancelling, setIsCancelling] = useState(false)
   const [error, setError] = useState('')
   const [showCancelConfirm, setShowCancelConfirm] = useState(false)
+  const [licenseCode] = useState('MQ2025BR7X9K') // Código mockado por enquanto
 
   useEffect(() => {
     // TEMPORÁRIO: Comentado para permitir acesso sem autenticação
@@ -50,8 +49,8 @@ export default function AssinaturaPage() {
       status: 'active',
       planName: 'Plano Mensal MediQuo',
       amount: 15.90,
-      startDate: '2024-01-15',
-      nextBillingDate: '2024-02-15',
+      startDate: '2025-08-11',
+      nextBillingDate: '2025-09-11',
       paymentMethod: {
         brand: 'Visa',
         lastFourDigits: '4242'
@@ -61,14 +60,14 @@ export default function AssinaturaPage() {
     setPaymentHistory([
       {
         id: 'pay_1',
-        date: '2024-01-15',
+        date: '2025-06-11',
         amount: 15.90,
         status: 'paid' as const,
         invoiceUrl: '#'
       },
       {
         id: 'pay_2',
-        date: '2023-12-15',
+        date: '2025-07-11',
         amount: 15.90,
         status: 'paid' as const,
         invoiceUrl: '#'
@@ -111,24 +110,6 @@ export default function AssinaturaPage() {
     // if (!signupData?.subscriptionId) return
     return // Temporário
 
-    setIsCancelling(true)
-    setError('')
-
-    try {
-      const result = await cancelSubscription('temp-id') // signupData.subscriptionId
-      if (result.success) {
-        // Recarregar dados após cancelamento
-        await loadSubscriptionData()
-        setShowCancelConfirm(false)
-      } else {
-        setError(result.error || 'Erro ao cancelar assinatura')
-      }
-    } catch (error) {
-      logger.error('Error cancelling subscription', error)
-      setError('Erro ao processar cancelamento')
-    } finally {
-      setIsCancelling(false)
-    }
   }
 
   const formatDate = (dateString: string) => {
@@ -169,6 +150,11 @@ export default function AssinaturaPage() {
           </span>
         )
     }
+  }
+
+  const copyLicenseCode = () => {
+    navigator.clipboard.writeText(licenseCode)
+    // Poderia adicionar um toast aqui para confirmar a cópia
   }
 
   if (isLoading) {
@@ -229,6 +215,37 @@ export default function AssinaturaPage() {
                       <Calendar className="h-4 w-4 mr-2 text-gray-500" />
                       {subscription.status === 'active' ? formatDate(subscription.nextBillingDate) : '-'}
                     </p>
+                  </div>
+                </div>
+
+                {/* Campo de Licença/Código de Acesso */}
+                <div className="pt-4 border-t">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center mb-2">
+                          <Key className="h-5 w-5 mr-2 text-blue-600" />
+                          <p className="text-sm font-semibold text-blue-900">Código de Acesso ao App</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <code className="text-lg font-mono font-bold text-blue-900 bg-white px-3 py-2 rounded border border-blue-300">
+                            {licenseCode}
+                          </code>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={copyLicenseCode}
+                            className="hover:bg-blue-100"
+                          >
+                            <Copy className="h-4 w-4 mr-1" />
+                            Copiar
+                          </Button>
+                        </div>
+                        <p className="text-xs text-blue-700 mt-2">
+                          Use este código para acessar o aplicativo MediQuo no seu celular
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
