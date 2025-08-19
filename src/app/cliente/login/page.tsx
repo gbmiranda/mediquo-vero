@@ -18,6 +18,7 @@ import { Loader2, Mail, ArrowLeft } from 'lucide-react'
 import { logger } from '@/utils/logger'
 import { toast } from '@/hooks/use-toast'
 import { checkSubscriptionStatus } from '@/services/subscription-service'
+import gtag from '@/utils/analytics'
 import {
   VALIDATION_ERRORS,
   AUTH_ERRORS,
@@ -101,6 +102,9 @@ export default function LoginPage() {
       if (result.success) {
         setStep('otp')
         logger.authFlow('OTP requested successfully, moving to validation step')
+        
+        // GA4: Evento de geração de lead
+        gtag.generateLead(149)
       } else {
         const errorMsg = result.error || 'Erro ao solicitar código de verificação'
         if (errorMsg.includes('Email não encontrado')) {
@@ -149,6 +153,18 @@ export default function LoginPage() {
 
       if (result.success) {
         logger.authFlow('OTP validation successful, checking subscription')
+        
+        // GA4: Set User ID e evento de login/signup
+        if (signupData?.id) {
+          gtag.setUserId(signupData.id)
+          
+          // Se precisa completar perfil, é signup; caso contrário, é login
+          if (signupData.needMoreInformation) {
+            gtag.signUp('otp')
+          } else {
+            gtag.login('otp')
+          }
+        }
 
         // Verificar se precisa completar perfil
         if (signupData?.needMoreInformation) {

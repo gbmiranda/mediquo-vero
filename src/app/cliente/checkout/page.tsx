@@ -16,6 +16,7 @@ import { getAddressByCep, validateCep } from '@/services/address-service'
 import { processCardTransaction } from '@/services/checkout-service'
 import { getUserProfile } from '@/services/user-service'
 import { logger } from '@/utils/logger'
+import gtag from '@/utils/analytics'
 import { Check, CreditCard, Loader2, Shield } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
@@ -280,6 +281,15 @@ export default function CheckoutPage() {
     e.preventDefault()
     setIsProcessing(true)
     setPaymentError('') // Limpar erro anterior
+    
+    // GA4: Evento de início do checkout
+    const items = [{
+      item_id: 'MEDIQUO_SUBSCRIPTION',
+      item_name: 'Assinatura MediQuo',
+      price: 149,
+      quantity: 1
+    }]
+    gtag.beginCheckout(149, items)
 
     try {
       logger.authFlow('Processing checkout payment')
@@ -330,6 +340,9 @@ export default function CheckoutPage() {
       if (!signupData?.id) {
         throw new Error('ID do usuário não encontrado')
       }
+      
+      // GA4: Evento de adicionar informações de pagamento
+      gtag.addPaymentInfo('credit_card', 149)
 
       // Process credit card payment for subscription
       const result = await processCardTransactionHandler(cardData, addressData, signupData.id.toString())
@@ -337,6 +350,16 @@ export default function CheckoutPage() {
       if (result.success) {
         logger.authFlow('Payment processed successfully, starting countdown before redirect')
         setIsPaymentSuccess(true)
+        
+        // GA4: Evento de purchase/compra completa
+        const transactionId = result.data?.transactionId || `TXN_${Date.now()}`
+        const purchaseItems = [{
+          item_id: 'MEDIQUO_SUBSCRIPTION',
+          item_name: 'Assinatura MediQuo',
+          price: 149,
+          quantity: 1
+        }]
+        gtag.purchase(transactionId, 149, purchaseItems, 'credit_card')
 
         // Iniciar countdown de 10 segundos
         let countdown = 10

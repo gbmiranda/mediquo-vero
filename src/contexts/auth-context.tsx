@@ -27,6 +27,7 @@ import {
 import { signupUser, validateOTP, logout as logoutApi } from '@/services/auth-service'
 import { updateProfile } from '@/services/user-service'
 import { logger } from '@/utils/logger'
+import gtag from '@/utils/analytics'
 
 // ===================================================================
 // ESTADO INICIAL
@@ -169,6 +170,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
           type: 'INITIALIZE',
           payload: { signupData, userData, token, email }
         })
+        
+        // GA4: Se já está autenticado na inicialização, definir User ID
+        if (token && signupData?.id) {
+          gtag.setUserId(signupData.id)
+        }
 
       } catch (error) {
         logger.authError('Auth initialization failed', error)

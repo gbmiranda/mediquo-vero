@@ -6,6 +6,7 @@ import { authenticateByEmailUrl } from '@/services/auth-service';
 import { getUserProfile } from '@/services/user-service';
 import { useToast } from '@/hooks/use-toast';
 import { saveToken, saveSignupData, saveUserData, saveEmail, getUserIdFromToken } from '@/utils/auth-storage';
+import gtag from '@/utils/analytics';
 
 export default function EmailUrlAuth() {
   const router = useRouter();
@@ -74,6 +75,17 @@ export default function EmailUrlAuth() {
                 needMoreInformation: response.data.needMoreInformation
               };
               saveSignupData(signupData);
+              
+              // GA4: Set User ID e evento de login/signup
+              gtag.setUserId(userProfileResponse.data.id);
+              
+              // Se needMoreInformation é true, é um novo usuário (signup)
+              // Se é false, é um usuário existente (login)
+              if (response.data.needMoreInformation) {
+                gtag.signUp('email_link');
+              } else {
+                gtag.login('email_link');
+              }
 
               // Redirecionar baseado em needMoreInformation
               if (response.data.needMoreInformation) {

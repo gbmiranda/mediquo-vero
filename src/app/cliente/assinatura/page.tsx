@@ -11,6 +11,7 @@ import {
   PaymentHistoryItem,
   SubscriptionDetails
 } from '@/services/subscription-service'
+import gtag from '@/utils/analytics'
 import {
   AlertCircle,
   Calendar,
@@ -155,6 +156,20 @@ export default function AssinaturaPage() {
   const copyLicenseCode = () => {
     navigator.clipboard.writeText(licenseCode)
     // Poderia adicionar um toast aqui para confirmar a cópia
+    
+    // GA4: Quando o usuário copia o código, possivelmente vai acessar o MediQuo
+    // Evento será disparado quando a integração real estiver ativa
+    // gtag.beginConsultation('online')
+  }
+  
+  // Função para quando o usuário clica para acessar o MediQuo
+  // Será usada quando a integração estiver completa
+  const handleAccessMediquo = () => {
+    // GA4: Evento de início de consulta
+    gtag.beginConsultation('online')
+    
+    // Aqui viria a lógica de redirecionamento ou abertura do app MediQuo
+    // Por enquanto apenas logamos o evento
   }
 
   if (isLoading) {
