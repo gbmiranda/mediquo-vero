@@ -12,7 +12,7 @@ declare global {
   }
 }
 
-const GA_TRACKING_ID = 'G-9RM3WQZ401';
+const GA_TRACKING_ID = 'G-SMC2TB0C39';
 
 // ===================================================================
 // FUNÇÕES DE TRACKING
