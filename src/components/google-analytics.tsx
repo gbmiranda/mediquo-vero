@@ -1,8 +1,7 @@
 'use client'
 
 import Script from 'next/script'
-
-const GA_TRACKING_ID = 'G-SMC2TB0C39'
+import { GA_TRACKING_ID } from '@/config/google'
 
 export default function GoogleAnalytics() {
   return (

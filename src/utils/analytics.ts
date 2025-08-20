@@ -2,6 +2,8 @@
 // GOOGLE ANALYTICS TRACKING - MEDIQUO VERO
 // ===================================================================
 
+import { GA_TRACKING_ID } from '@/config/google';
+
 declare global {
   interface Window {
     gtag: (
@@ -11,8 +13,6 @@ declare global {
     ) => void;
   }
 }
-
-const GA_TRACKING_ID = 'G-SMC2TB0C39';
 
 // ===================================================================
 // FUNÇÕES DE TRACKING
