@@ -2,8 +2,8 @@
 // CONFIGURAÇÃO BASE DA API - MEDIQUO ARAUJO
 // ===================================================================
 
-import { logger } from '@/utils/logger'
 import { getToken } from '@/utils/auth-storage'
+import { logger } from '@/utils/logger'
 
 export const API_BASE_URL = 'https://araujo-api.mediquo.com.br'
 
@@ -15,7 +15,7 @@ export function getHeaders(includeAuth = false): HeadersInit {
   const headers: HeadersInit = {
     'accept': 'application/hal+json',
     'Content-Type': 'application/json',
-    'MEDIQUO_CLIENT': 'VERO',
+    'Mediquo-Client': 'VERO',
   }
 
   if (includeAuth) {

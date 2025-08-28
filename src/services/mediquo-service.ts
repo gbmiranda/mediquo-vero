@@ -39,11 +39,7 @@ export async function getMediquoToken(cpf: string): Promise<MediquoTokenResponse
 
     const response = await fetch(url, {
       method: 'GET',
-      headers: {
-        'accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
+      headers: getHeaders(true),
       cache: 'no-store',
     })
 
