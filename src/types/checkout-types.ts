@@ -1,52 +1,78 @@
 // ===================================================================
-// TIPOS DO SERVIÇO DE CHECKOUT - MEDIQUO ARAUJO
+// TIPOS DO SERVIÇO DE CHECKOUT - MEDIQUO ARAUJO (V2 API)
 // ===================================================================
 
-export interface CardPagarmeDTO {
-  number: string
-  exp_month: string
-  exp_year: string
-  cvv: string
-  holder_name: string
-  holder_document: string
-}
+// ===================================================================
+// NOVOS TIPOS PARA V2 API (/v2/payment/card-transaction)
+// ===================================================================
 
-export interface AddressPagarmeDTO {
-  street: string
-  number: string
-  complement?: string
+export interface PagarmeAddressRequest {
+  id?: string
+  line_1: string
+  line_2?: string
+  zip_code: string
   city: string
   state: string
-  zip_code: string
   country: string
+  neighborhood: string
 }
 
-export interface CardTransactionRequest {
-  userId: string
-  cardPagarmeDTO: CardPagarmeDTO
-  addressPagarmeDTO: AddressPagarmeDTO
+export interface PagarmeCardRequest {
+  number: string
+  holder_name: string
+  holder_document?: string
+  exp_month: number
+  exp_year: number
+  cvv: string
+  billing_address_id?: string
 }
 
-export interface CardTransactionApiResponse {
-  id: string
-  status: string
+export interface PaymentCardTransactionRequestDTO {
+  id?: number
+  createdAt?: string
+  updatedAt?: string
+  active?: boolean
+  paymentAt?: string
+  installments?: number
+  checkoutStatusType?: 'PENDING' | 'APPROVED' | 'FAILED' | 'EXPIRED' | 'RECURRING'
+  paymentType: 'CARD_CREDIT' | 'CARD_CREDIT_RECURRENCY' | 'CARD_DEBIT' | 'PIX'
   amount: number
-  currency: string
-  payment_method: string
-  created_at: string
-  updated_at: string
-  transaction_id?: string
-  gateway_response?: any
+  unitaryPricing: number
+  patientId?: number
+  validAt?: string
+  nfeCode?: string
+  qrcodeUrl?: string
+  pixCode?: string
+  pagarmeAddressRequest: PagarmeAddressRequest
+  pagarmeCardRequest: PagarmeCardRequest
+}
+
+export interface PaymentDTO {
+  id: number
+  createdAt: string
+  updatedAt: string
+  active: boolean
+  paymentAt?: string
+  installments?: number
+  checkoutStatusType: 'PENDING' | 'APPROVED' | 'FAILED' | 'EXPIRED' | 'RECURRING'
+  paymentType: 'CARD_CREDIT' | 'CARD_CREDIT_RECURRENCY' | 'CARD_DEBIT' | 'PIX'
+  amount: number
+  unitaryPricing: number
+  patientId?: number
+  validAt?: string
+  nfeCode?: string
+  qrcodeUrl?: string
+  pixCode?: string
 }
 
 export interface CardTransactionResponse {
   success: boolean
-  data?: CardTransactionApiResponse
+  data?: PaymentDTO
   error?: string
 }
 
 // ===================================================================
-// TIPOS PARA LISTAGEM DE TRANSAÇÕES
+// TIPOS PARA LISTAGEM DE TRANSAÇÕES (mantidos inalterados)
 // ===================================================================
 
 export interface SortCriteria {

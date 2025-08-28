@@ -181,12 +181,29 @@ export default function CheckoutPage() {
     return { isValid: true }
   }
 
-  const processCardTransactionHandler = async (cardData: any, addressData: any, userId: string) => {
+  const processCardTransactionHandler = async (cardData: any, addressData: any, patientId: string) => {
     try {
       const transactionData = {
-        userId: userId,
-        cardPagarmeDTO: cardData,
-        addressPagarmeDTO: addressData
+        cardData: {
+          number: cardData.number,
+          holder_name: cardData.holder_name,
+          holder_document: cardData.holder_document,
+          exp_month: cardData.exp_month,
+          exp_year: cardData.exp_year,
+          cvv: cardData.cvv
+        },
+        addressData: {
+          line_1: addressData.line_1,
+          line_2: addressData.line_2,
+          zip_code: addressData.zip_code,
+          city: addressData.city,
+          state: addressData.state,
+          country: addressData.country,
+          neighborhood: addressData.neighborhood
+        },
+        patientId: parseInt(patientId),
+        amount: 15.90,
+        paymentType: 'CARD_CREDIT_RECURRENCY' as const
       }
 
       const result = await processCardTransaction(transactionData)
@@ -286,26 +303,26 @@ export default function CheckoutPage() {
     const items = [{
       item_id: 'MEDIQUO_SUBSCRIPTION',
       item_name: 'Assinatura MediQuo',
-      price: 149,
+      price: 15.90,
       quantity: 1
     }]
-    gtag.beginCheckout(149, items)
+    gtag.beginCheckout(15.90, items)
 
     try {
       logger.authFlow('Processing checkout payment')
 
-      // Preparar dados do endereço (apenas para cartão)
+      // Preparar dados do endereço para a nova API V2
       const addressData = {
-        line_1: `${formData.address}, ${formData.complement || ''}`.trim(),
-        line_2: formData.number || '',
-        neighborhood: formData.neighborhood,
+        line_1: formData.address,
+        line_2: formData.number + (formData.complement ? `, ${formData.complement}` : ''),
         zip_code: formData.zipCode.replace(/\D/g, ''), // Remove máscara
         city: formData.city,
         state: formData.state,
-        country: 'BR'
+        country: 'BR',
+        neighborhood: formData.neighborhood
       }
 
-      // Preparar dados do cartão (apenas para cartão)
+      // Preparar dados do cartão para a nova API V2
       const [expMonth, expYear] = formData.expiryDate.split('/')
       const expYearNumber = parseInt(expYear, 10)
       const fullYear = expYearNumber < 100 ? expYearNumber + 2000 : expYearNumber // Suporte para YY e YYYY
@@ -342,7 +359,7 @@ export default function CheckoutPage() {
       }
       
       // GA4: Evento de adicionar informações de pagamento
-      gtag.addPaymentInfo('credit_card', 149)
+      gtag.addPaymentInfo('credit_card', 15.90)
 
       // Process credit card payment for subscription
       const result = await processCardTransactionHandler(cardData, addressData, signupData.id.toString())
@@ -352,14 +369,14 @@ export default function CheckoutPage() {
         setIsPaymentSuccess(true)
         
         // GA4: Evento de purchase/compra completa
-        const transactionId = result.data?.transactionId || `TXN_${Date.now()}`
+        const transactionId = result.data?.id?.toString() || `TXN_${Date.now()}`
         const purchaseItems = [{
           item_id: 'MEDIQUO_SUBSCRIPTION',
           item_name: 'Assinatura MediQuo',
-          price: 149,
+          price: 15.90,
           quantity: 1
         }]
-        gtag.purchase(transactionId, 149, purchaseItems, 'credit_card')
+        gtag.purchase(transactionId, 15.90, purchaseItems, 'credit_card')
 
         // Iniciar countdown de 10 segundos
         let countdown = 10

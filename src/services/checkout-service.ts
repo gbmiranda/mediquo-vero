@@ -1,16 +1,16 @@
 // ===================================================================
-// SERVIÇOS DE CHECKOUT - MEDIQUO ARAUJO
+// SERVIÇOS DE CHECKOUT - MEDIQUO ARAUJO (V2 API)
 // ===================================================================
 
 import { logger } from '@/utils/logger'
 import { getToken } from '@/utils/auth-storage'
 import { API_BASE_URL, getHeaders, handleResponse } from './api-config'
 import {
-  CardPagarmeDTO,
-  AddressPagarmeDTO,
-  CardTransactionRequest,
-  CardTransactionApiResponse,
+  PaymentCardTransactionRequestDTO,
+  PagarmeAddressRequest,
+  PagarmeCardRequest,
   CardTransactionResponse,
+  PaymentDTO,
   ListTransactionsParams,
   ListTransactionsResponse,
   TransactionListResponse
@@ -20,13 +20,37 @@ import {
 // API FUNCTIONS
 // ===================================================================
 
+export interface CardTransactionRequestData {
+  cardData: {
+    number: string
+    holder_name: string
+    holder_document: string
+    exp_month: number
+    exp_year: number
+    cvv: string
+  }
+  addressData: {
+    line_1: string
+    line_2?: string
+    zip_code: string
+    city: string
+    state: string
+    country: string
+    neighborhood: string
+  }
+  patientId: number
+  amount?: number
+  paymentType?: 'CARD_CREDIT' | 'CARD_CREDIT_RECURRENCY' | 'CARD_DEBIT' | 'PIX'
+}
+
 export async function processCardTransaction(
-  transactionData: CardTransactionRequest
+  transactionData: CardTransactionRequestData
 ): Promise<CardTransactionResponse> {
-  logger.authFlow('Starting card transaction processing', {
-    userId: transactionData.userId,
-    cardLast4: transactionData.cardPagarmeDTO.number.slice(-4),
-    amount: 'checkout'
+  logger.authFlow('Starting card transaction processing (V2 API)', {
+    patientId: transactionData.patientId,
+    cardLast4: transactionData.cardData.number.slice(-4),
+    amount: transactionData.amount || 15.90,
+    paymentType: transactionData.paymentType || 'CARD_CREDIT_RECURRENCY'
   })
 
   try {
@@ -35,45 +59,63 @@ export async function processCardTransaction(
       throw new Error('Token não encontrado. Faça login novamente.')
     }
 
-    const url = `${API_BASE_URL}/checkout/card-transaction`
+    const url = `${API_BASE_URL}/v2/payment/card-transaction`
+
+    // Preparar dados do cartão para a nova API
+    const pagarmeCardRequest: PagarmeCardRequest = {
+      number: transactionData.cardData.number,
+      holder_name: transactionData.cardData.holder_name,
+      holder_document: transactionData.cardData.holder_document,
+      exp_month: transactionData.cardData.exp_month,
+      exp_year: transactionData.cardData.exp_year,
+      cvv: transactionData.cardData.cvv
+    }
+
+    // Preparar dados do endereço para a nova API
+    const pagarmeAddressRequest: PagarmeAddressRequest = {
+      line_1: transactionData.addressData.line_1,
+      line_2: transactionData.addressData.line_2,
+      zip_code: transactionData.addressData.zip_code,
+      city: transactionData.addressData.city,
+      state: transactionData.addressData.state,
+      country: transactionData.addressData.country,
+      neighborhood: transactionData.addressData.neighborhood
+    }
+
+    // Preparar payload da nova API
+    const requestPayload: PaymentCardTransactionRequestDTO = {
+      amount: transactionData.amount || 15.90,
+      unitaryPricing: transactionData.amount || 15.90,
+      paymentType: transactionData.paymentType || 'CARD_CREDIT_RECURRENCY',
+      patientId: transactionData.patientId,
+      installments: 1, // Para assinatura mensal
+      pagarmeCardRequest,
+      pagarmeAddressRequest
+    }
 
     logger.apiRequest('POST', url, {
-      userId: transactionData.userId,
-      cardLast4: transactionData.cardPagarmeDTO.number.slice(-4),
-      city: transactionData.addressPagarmeDTO.city,
-      state: transactionData.addressPagarmeDTO.state
+      patientId: transactionData.patientId,
+      cardLast4: transactionData.cardData.number.slice(-4),
+      city: transactionData.addressData.city,
+      state: transactionData.addressData.state,
+      amount: requestPayload.amount,
+      paymentType: requestPayload.paymentType
     })
 
     const response = await fetch(url, {
       method: 'POST',
-      headers: {
-        'accept': 'application/hal+json',
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(transactionData),
+      headers: getHeaders(true),
+      body: JSON.stringify(requestPayload),
       cache: 'no-store',
     })
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}))
-      const errorMessage = errorData.message || `Erro HTTP ${response.status}: ${response.statusText}`
+    const data = await handleResponse<PaymentDTO>(response, 'processCardTransaction', 'POST')
 
-      logger.authError('Card transaction API error', {
-        status: response.status,
-        statusText: response.statusText,
-        errorData
-      })
-
-      throw new Error(errorMessage)
-    }
-
-    const data = await response.json()
-
-    logger.authFlow('Card transaction successful', {
+    logger.authFlow('Card transaction successful (V2 API)', {
       transactionId: data.id,
-      status: data.status,
-      paymentMethod: data.payment_method
+      checkoutStatusType: data.checkoutStatusType,
+      paymentType: data.paymentType,
+      amount: data.amount
     })
 
     return {
@@ -83,7 +125,7 @@ export async function processCardTransaction(
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Erro no processamento do pagamento'
-    logger.authError('Card transaction failed', error)
+    logger.authError('Card transaction failed (V2 API)', error)
 
     return {
       success: false,
@@ -130,27 +172,11 @@ export async function listTransactions(
 
     const response = await fetch(url, {
       method: 'GET',
-      headers: {
-        'accept': 'application/hal+json',
-        'Authorization': `Bearer ${token}`
-      },
+      headers: getHeaders(true),
       cache: 'no-store',
     })
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}))
-      const errorMessage = errorData.message || `Erro HTTP ${response.status}: ${response.statusText}`
-
-      logger.authError('List transactions API error', {
-        status: response.status,
-        statusText: response.statusText,
-        errorData
-      })
-
-      throw new Error(errorMessage)
-    }
-
-    const data: TransactionListResponse = await response.json()
+    const data = await handleResponse<TransactionListResponse>(response, 'listTransactions', 'GET')
 
     logger.authFlow('List transactions successful', {
       totalElements: data.totalElements,
@@ -192,25 +218,11 @@ export async function processPixTransaction(
 
     const response = await fetch(url, {
       method: 'POST',
-      headers: {
-        'accept': 'application/hal+json',
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
+      headers: getHeaders(true),
       body: JSON.stringify({ patientId: parseInt(userId) })
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      logger.authError('PIX transaction API error', {
-        status: response.status,
-        statusText: response.statusText,
-        error: errorText
-      })
-      throw new Error(`Erro na API: ${response.status} - ${response.statusText}`)
-    }
-
-    const data = await response.json()
+    const data = await handleResponse<any>(response, 'processPixTransaction', 'POST')
 
     logger.authFlow('PIX transaction processed successfully', {
       userId,

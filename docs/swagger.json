@@ -1,0 +1,1549 @@
+{
+  "openapi": "3.0.1",
+  "servers": [
+    {
+      "url": "/",
+      "description": "Default Server URL"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/user-crud/{id}": {
+      "get": {
+        "tags": ["user-controller"],
+        "operationId": "findById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["user-controller"],
+        "operationId": "update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["user-controller"],
+        "operationId": "deleteById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/patient/{id}": {
+      "get": {
+        "tags": ["patient-controller"],
+        "operationId": "findById_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["patient-controller"],
+        "operationId": "update_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatientDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["patient-controller"],
+        "operationId": "deleteById_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/webhook/controller-callback": {
+      "post": {
+        "tags": ["pagarme-webhook-controller"],
+        "operationId": "handleWebhook",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PagarmeWebhookResponsePOJO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v2/payment/card-transaction": {
+      "post": {
+        "tags": ["payment-controller"],
+        "operationId": "checkoutCardTransaction",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentCardTransactionRequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user-crud": {
+      "get": {
+        "tags": ["user-controller"],
+        "operationId": "findAll",
+        "parameters": [
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
+          },
+          {
+            "name": "index",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageUserDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["user-controller"],
+        "operationId": "save",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/patient": {
+      "get": {
+        "tags": ["patient-controller"],
+        "operationId": "findAll_1",
+        "parameters": [
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
+          },
+          {
+            "name": "index",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagePatientDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["patient-controller"],
+        "operationId": "save_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatientDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/checkout/pix-transaction": {
+      "post": {
+        "tags": ["checkout-controller"],
+        "operationId": "checkoutPixTransaction",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/checkout/card-transaction": {
+      "post": {
+        "tags": ["checkout-controller"],
+        "operationId": "checkoutCardTransaction_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutCardTransactionRequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/signup": {
+      "post": {
+        "tags": ["authentication-controller"],
+        "operationId": "register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegisterRequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserRegisterResponseDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["authentication-controller"],
+        "operationId": "authenticate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLoginRequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserLoginResponseDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/email-url": {
+      "post": {
+        "tags": ["authentication-controller"],
+        "operationId": "authenticateWithEmailUrl",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserLoginResponseDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/patient/{document-number}/find": {
+      "get": {
+        "tags": ["patient-controller"],
+        "operationId": "findByDocumentNumber",
+        "parameters": [
+          {
+            "name": "document-number",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/patient/{code}/mediquo-login": {
+      "get": {
+        "tags": ["patient-controller"],
+        "operationId": "loginMediquoPatient",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediquoResponsePatientLogin"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/checkout/list-transaction": {
+      "get": {
+        "tags": ["checkout-controller"],
+        "operationId": "checkoutListTransaction",
+        "parameters": [
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageCheckoutDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UserDTO": {
+        "required": ["birthDate", "email", "fullName", "gender"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "fullName": {
+            "maxLength": 255,
+            "minLength": 0,
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "documentNumber": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string",
+            "enum": ["MASCULINO", "FEMININO", "OUTRO"]
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PatientDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "gender": {
+            "type": "string",
+            "enum": ["MASCULINO", "FEMININO", "OUTRO"]
+          },
+          "documentNumber": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "motherName": {
+            "type": "string"
+          },
+          "addressStreet": {
+            "type": "string"
+          },
+          "addressNumber": {
+            "type": "string"
+          },
+          "addressDistrict": {
+            "type": "string"
+          },
+          "addressCity": {
+            "type": "string"
+          },
+          "addressState": {
+            "type": "string"
+          },
+          "addressCountry": {
+            "type": "string"
+          },
+          "addressZipCode": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "PagarmeWebhookChargeResponsePOJO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string"
+          },
+          "payment_method": {
+            "type": "string"
+          },
+          "last_transaction": {
+            "$ref": "#/components/schemas/PagarmeWebhookLastTransactionResponseDTO"
+          }
+        }
+      },
+      "PagarmeWebhookDataResponsePOJO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "charges": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PagarmeWebhookChargeResponsePOJO"
+            }
+          }
+        }
+      },
+      "PagarmeWebhookLastTransactionResponseDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "transaction_type": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "installments": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "acquirer_name": {
+            "type": "string"
+          },
+          "acquirer_tid": {
+            "type": "string"
+          },
+          "acquirer_nsu": {
+            "type": "string"
+          },
+          "acquirer_auth_code": {
+            "type": "string"
+          },
+          "acquirer_message": {
+            "type": "string"
+          },
+          "acquirer_return_code": {
+            "type": "string"
+          },
+          "pix_provider_tid": {
+            "type": "string"
+          }
+        }
+      },
+      "PagarmeWebhookResponsePOJO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/PagarmeWebhookDataResponsePOJO"
+          }
+        }
+      },
+      "PagarmeAddressRequest": {
+        "required": ["city", "line_1", "state", "zip_code"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "line_1": {
+            "type": "string"
+          },
+          "line_2": {
+            "type": "string"
+          },
+          "zip_code": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "neighborhood": {
+            "type": "string"
+          }
+        }
+      },
+      "PagarmeCardRequest": {
+        "required": ["holder_name"],
+        "type": "object",
+        "properties": {
+          "number": {
+            "maxLength": 19,
+            "minLength": 13,
+            "type": "string"
+          },
+          "holder_name": {
+            "type": "string"
+          },
+          "holder_document": {
+            "type": "string"
+          },
+          "exp_month": {
+            "maximum": 12,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "exp_year": {
+            "minimum": 2024,
+            "type": "integer",
+            "format": "int32"
+          },
+          "cvv": {
+            "maxLength": 4,
+            "minLength": 3,
+            "type": "string"
+          },
+          "billing_address_id": {
+            "type": "string"
+          }
+        }
+      },
+      "PaymentCardTransactionRequestDTO": {
+        "required": ["amount", "paymentType", "unitaryPricing"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "paymentAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "installments": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "checkoutStatusType": {
+            "type": "string",
+            "enum": ["PENDING", "APPROVED", "FAILED", "EXPIRED", "RECURRING"]
+          },
+          "paymentType": {
+            "type": "string",
+            "enum": ["CARD_CREDIT", "CARD_CREDIT_RECURRENCY", "CARD_DEBIT", "PIX"]
+          },
+          "amount": {
+            "minimum": 0.01,
+            "exclusiveMinimum": false,
+            "type": "number",
+            "format": "double"
+          },
+          "unitaryPricing": {
+            "minimum": 0.01,
+            "exclusiveMinimum": false,
+            "type": "number",
+            "format": "double"
+          },
+          "patientId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "validAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "nfeCode": {
+            "type": "string"
+          },
+          "qrcodeUrl": {
+            "type": "string"
+          },
+          "pixCode": {
+            "type": "string"
+          },
+          "pagarmeAddressRequest": {
+            "$ref": "#/components/schemas/PagarmeAddressRequest"
+          },
+          "pagarmeCardRequest": {
+            "$ref": "#/components/schemas/PagarmeCardRequest"
+          }
+        }
+      },
+      "PaymentDTO": {
+        "required": ["amount", "paymentType", "unitaryPricing"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "paymentAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "installments": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "checkoutStatusType": {
+            "type": "string",
+            "enum": ["PENDING", "APPROVED", "FAILED", "EXPIRED", "RECURRING"]
+          },
+          "paymentType": {
+            "type": "string",
+            "enum": ["CARD_CREDIT", "CARD_CREDIT_RECURRENCY", "CARD_DEBIT", "PIX"]
+          },
+          "amount": {
+            "minimum": 0.01,
+            "exclusiveMinimum": false,
+            "type": "number",
+            "format": "double"
+          },
+          "unitaryPricing": {
+            "minimum": 0.01,
+            "exclusiveMinimum": false,
+            "type": "number",
+            "format": "double"
+          },
+          "patientId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "validAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "nfeCode": {
+            "type": "string"
+          },
+          "qrcodeUrl": {
+            "type": "string"
+          },
+          "pixCode": {
+            "type": "string"
+          }
+        }
+      },
+      "CheckoutDTO": {
+        "required": ["amount", "paymentType", "unitaryPricing"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "paymentAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "installments": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "checkoutStatusType": {
+            "type": "string",
+            "enum": ["PENDING", "APPROVED", "FAILED", "EXPIRED", "RECURRING"]
+          },
+          "paymentType": {
+            "type": "string",
+            "enum": ["CARD_CREDIT", "CARD_CREDIT_RECURRENCY", "CARD_DEBIT", "PIX"]
+          },
+          "amount": {
+            "minimum": 0.01,
+            "exclusiveMinimum": false,
+            "type": "number",
+            "format": "double"
+          },
+          "unitaryPricing": {
+            "minimum": 0.01,
+            "exclusiveMinimum": false,
+            "type": "number",
+            "format": "double"
+          },
+          "patientId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "validAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "nfeCode": {
+            "type": "string"
+          },
+          "qrcodeUrl": {
+            "type": "string"
+          },
+          "pixCode": {
+            "type": "string"
+          }
+        }
+      },
+      "BillingAddress": {
+        "type": "object",
+        "properties": {
+          "line_1": {
+            "type": "string"
+          },
+          "line_2": {
+            "type": "string"
+          },
+          "zip_code": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          }
+        }
+      },
+      "CheckoutCardTransactionRequestDTO": {
+        "required": ["amount", "paymentType", "unitaryPricing"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "paymentAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "installments": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "checkoutStatusType": {
+            "type": "string",
+            "enum": ["PENDING", "APPROVED", "FAILED", "EXPIRED", "RECURRING"]
+          },
+          "paymentType": {
+            "type": "string",
+            "enum": ["CARD_CREDIT", "CARD_CREDIT_RECURRENCY", "CARD_DEBIT", "PIX"]
+          },
+          "amount": {
+            "minimum": 0.01,
+            "exclusiveMinimum": false,
+            "type": "number",
+            "format": "double"
+          },
+          "unitaryPricing": {
+            "minimum": 0.01,
+            "exclusiveMinimum": false,
+            "type": "number",
+            "format": "double"
+          },
+          "patientId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "validAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "nfeCode": {
+            "type": "string"
+          },
+          "qrcodeUrl": {
+            "type": "string"
+          },
+          "pixCode": {
+            "type": "string"
+          },
+          "addressPagarmeDTO": {
+            "$ref": "#/components/schemas/PagarmeAddressDTO"
+          },
+          "cardPagarmeDTO": {
+            "$ref": "#/components/schemas/PagarmeCardDTO"
+          }
+        }
+      },
+      "PagarmeAddressDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "line_1": {
+            "type": "string"
+          },
+          "line_2": {
+            "type": "string"
+          },
+          "zip_code": {
+            "type": "string"
+          },
+          "neighborhood": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          }
+        }
+      },
+      "PagarmeCardDTO": {
+        "required": ["brand", "cvv", "holder_document", "holder_name", "number"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "billing_address_id": {
+            "type": "string"
+          },
+          "billing_address": {
+            "$ref": "#/components/schemas/BillingAddress"
+          },
+          "number": {
+            "maxLength": 19,
+            "minLength": 13,
+            "type": "string"
+          },
+          "holder_name": {
+            "type": "string"
+          },
+          "holder_document": {
+            "pattern": "\\d{11}|\\d{14}",
+            "type": "string"
+          },
+          "exp_month": {
+            "maximum": 12,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "exp_year": {
+            "maximum": 2100,
+            "minimum": 2024,
+            "type": "integer",
+            "format": "int32"
+          },
+          "cvv": {
+            "pattern": "\\d{3,4}",
+            "type": "string"
+          },
+          "brand": {
+            "type": "string"
+          }
+        }
+      },
+      "UserRegisterRequestDTO": {
+        "required": ["userApplication"],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "userApplication": {
+            "type": "string",
+            "enum": ["PHARMA", "CLIENT"]
+          },
+          "googleId": {
+            "type": "string"
+          }
+        }
+      },
+      "UserRegisterResponseDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "needMoreInformation": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UserLoginRequestDTO": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          }
+        }
+      },
+      "UserLoginResponseDTO": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "expiresIn": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "needMoreInformation": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Pageable": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PageUserDTO": {
+        "type": "object",
+        "properties": {
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserDTO"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SortObject"
+            }
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PageableObject": {
+        "type": "object",
+        "properties": {
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "paged": {
+            "type": "boolean"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unpaged": {
+            "type": "boolean"
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sort": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SortObject"
+            }
+          }
+        }
+      },
+      "SortObject": {
+        "type": "object",
+        "properties": {
+          "direction": {
+            "type": "string"
+          },
+          "nullHandling": {
+            "type": "string"
+          },
+          "ascending": {
+            "type": "boolean"
+          },
+          "property": {
+            "type": "string"
+          },
+          "ignoreCase": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PagePatientDTO": {
+        "type": "object",
+        "properties": {
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PatientDTO"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SortObject"
+            }
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "MediquoResponsePatientLogin": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string"
+          }
+        }
+      },
+      "PageCheckoutDTO": {
+        "type": "object",
+        "properties": {
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CheckoutDTO"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SortObject"
+            }
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "name": "bearerAuth",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
