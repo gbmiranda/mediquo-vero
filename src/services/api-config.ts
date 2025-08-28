@@ -15,6 +15,7 @@ export function getHeaders(includeAuth = false): HeadersInit {
   const headers: HeadersInit = {
     'accept': 'application/hal+json',
     'Content-Type': 'application/json',
+    'MEDIQUO_CLIENT': 'VERO',
   }
 
   if (includeAuth) {
