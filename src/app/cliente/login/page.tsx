@@ -17,7 +17,6 @@ import { SiteHeader } from '@/components/site-header'
 import { Loader2, Mail, ArrowLeft } from 'lucide-react'
 import { logger } from '@/utils/logger'
 import { toast } from '@/hooks/use-toast'
-import { checkSubscriptionStatus } from '@/services/subscription-service'
 import gtag from '@/utils/analytics'
 import {
   VALIDATION_ERRORS,
@@ -59,20 +58,9 @@ export default function LoginPage() {
       if (signupData.needMoreInformation) {
         router.push('/cliente/complete-profile')
       } else {
-        // Verificar status da assinatura para redirecionar corretamente
-        const checkAndRedirect = async () => {
-          if (signupData.id) {
-            const subStatus = await checkSubscriptionStatus(signupData.id.toString())
-            if (subStatus.success && subStatus.data?.active) {
-              router.push('/cliente/assinatura')
-            } else {
-              router.push('/cliente/checkout')
-            }
-          } else {
-            router.push('/cliente/checkout')
-          }
-        }
-        checkAndRedirect()
+        // Sempre redirecionar para assinatura após login
+        // A página de assinatura verificará se tem assinatura ativa
+        router.push('/cliente/assinatura')
       }
     }
   }, [token, signupData, router])
@@ -170,19 +158,9 @@ export default function LoginPage() {
         if (signupData?.needMoreInformation) {
           router.push('/cliente/complete-profile')
         } else {
-          // Verificar status da assinatura
-          if (signupData?.id) {
-            const subStatus = await checkSubscriptionStatus(signupData.id.toString())
-            if (subStatus.success && subStatus.data?.active) {
-              // Tem assinatura ativa, vai para gerenciamento
-              router.push('/cliente/assinatura')
-            } else {
-              // Não tem assinatura, vai para checkout
-              router.push('/cliente/checkout')
-            }
-          } else {
-            router.push('/cliente/checkout')
-          }
+          // Sempre redirecionar para assinatura após login
+          // A página de assinatura verificará se tem assinatura ativa
+          router.push('/cliente/assinatura')
         }
       } else {
         const errorMsg = result.error || 'Código de verificação inválido'

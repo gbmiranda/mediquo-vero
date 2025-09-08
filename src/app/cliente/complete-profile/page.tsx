@@ -20,7 +20,6 @@ import {
 } from '@/config/error-messages'
 import { useAuth } from '@/contexts/auth-context'
 import { toast } from '@/hooks/use-toast'
-import { checkSubscriptionStatus } from '@/services/subscription-service'
 import { logger } from '@/utils/logger'
 import { AlertCircle, CheckCircle, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -70,22 +69,11 @@ export default function CompleteProfile() {
         return
       }
 
-      // Se não precisa completar perfil, verificar assinatura e redirecionar
+      // Se não precisa completar perfil, redirecionar para assinatura
       if (signupData && !signupData.needMoreInformation) {
-        logger.authFlow('Profile already complete, checking subscription')
-        const checkAndRedirect = async () => {
-          if (signupData.id) {
-            const subStatus = await checkSubscriptionStatus(signupData.id.toString())
-            if (subStatus.success && subStatus.data?.active) {
-              router.push('/cliente/assinatura')
-            } else {
-              router.push('/cliente/checkout')
-            }
-          } else {
-            router.push('/cliente/checkout')
-          }
-        }
-        checkAndRedirect()
+        logger.authFlow('Profile already complete, redirecting to subscription')
+        // Sempre redirecionar para assinatura - ela verificará se tem assinatura ativa
+        router.push('/cliente/assinatura')
         return
       }
 
@@ -217,16 +205,9 @@ export default function CompleteProfile() {
 
         logger.authFlow('Profile completion successful, checking subscription')
 
-        // Verificar status da assinatura
-        let redirectPath = '/cliente/checkout'
-        
-        if (signupData?.id) {
-          const subStatus = await checkSubscriptionStatus(signupData.id.toString())
-          if (subStatus.success && subStatus.data?.active) {
-            // Tem assinatura ativa, vai para gerenciamento
-            redirectPath = '/cliente/assinatura'
-          }
-        }
+        // Sempre redirecionar para assinatura após completar perfil
+        // A página de assinatura verificará se tem assinatura ativa
+        const redirectPath = '/cliente/assinatura'
 
         logger.authFlow('Redirecting after profile completion', { redirectPath })
 

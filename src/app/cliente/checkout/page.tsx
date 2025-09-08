@@ -58,6 +58,8 @@ export default function CheckoutPage() {
 
   // Ref para focar no campo número após busca do CEP
   const numberInputRef = useRef<HTMLInputElement>(null)
+  // Ref para prevenir cliques duplicados no botão de pagamento
+  const isSubmittingRef = useRef(false)
 
   // ===================================================================
   // EFEITOS
@@ -296,6 +298,15 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Prevenir submissão duplicada com verificação imediata
+    if (isSubmittingRef.current || isProcessing) {
+      logger.authFlow('Payment submission blocked - already processing')
+      return
+    }
+    
+    // Bloquear imediatamente novas submissões
+    isSubmittingRef.current = true
     setIsProcessing(true)
     setPaymentError('') // Limpar erro anterior
     
@@ -429,7 +440,9 @@ export default function CheckoutPage() {
 
       setPaymentError(friendlyErrorMessage)
     } finally {
+      // Liberar o botão após o processamento
       setIsProcessing(false)
+      isSubmittingRef.current = false
     }
   }
 
@@ -782,7 +795,7 @@ export default function CheckoutPage() {
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full bg-pink-600 hover:bg-pink-700"
+                  className="w-full bg-pink-600 hover:bg-pink-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={isProcessing}
                 >
                   {isProcessing ? (
@@ -816,7 +829,10 @@ export default function CheckoutPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => setPaymentError('')}
+                            onClick={() => {
+                              setPaymentError('')
+                              isSubmittingRef.current = false
+                            }}
                             className="text-red-800 border-red-300 hover:bg-red-100"
                           >
                             Tentar novamente

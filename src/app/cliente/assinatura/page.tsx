@@ -1,17 +1,17 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-// import { useRouter } from 'next/navigation' // Comentado temporariamente
+import { useRouter } from 'next/navigation'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { UserHeader } from '@/components/user-header'
 import { useAuth } from '@/contexts/auth-context'
-import {
-  PaymentHistoryItem,
-  SubscriptionDetails
-} from '@/services/subscription-service'
+import { getCurrentUserRecurrency, cancelCurrentUserRecurrency, getPaymentsByExternalPaymentId } from '@/services/payment-service'
+import { PaymentRecurrencyResponseDTO, PaymentDTO } from '@/types/payment-types'
 import gtag from '@/utils/analytics'
+import { logger } from '@/utils/logger'
+import { toast } from '@/hooks/use-toast'
 import {
   AlertCircle,
   Calendar,
@@ -24,101 +24,160 @@ import {
 } from 'lucide-react'
 
 export default function AssinaturaPage() {
-  // const router = useRouter() // Comentado temporariamente
+  const router = useRouter()
   const { signupData, isAuthenticated } = useAuth()
 
-  const [subscription, setSubscription] = useState<SubscriptionDetails | null>(null)
-  const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryItem[]>([])
+  const [subscription, setSubscription] = useState<PaymentRecurrencyResponseDTO | null>(null)
+  const [paymentHistory, setPaymentHistory] = useState<PaymentDTO[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isCancelling, setIsCancelling] = useState(false)
   const [error, setError] = useState('')
   const [showCancelConfirm, setShowCancelConfirm] = useState(false)
-  const [licenseCode] = useState('MQ2025BR7X9K') // Código mockado por enquanto
+  const [licenseCode, setLicenseCode] = useState('') // Será preenchido com o código real
 
   useEffect(() => {
-    // TEMPORÁRIO: Comentado para permitir acesso sem autenticação
-    // if (!isAuthenticated || !signupData?.subscriptionId) {
-    //   router.push('/cliente/login')
-    //   return
-    // }
+    // Verificar autenticação
+    if (!isAuthenticated) {
+      router.push('/cliente/login')
+      return
+    }
 
-    // loadSubscriptionData()
-
-    // TEMPORÁRIO: Dados mockados para teste
-    setSubscription({
-      id: 'sub_mock_123',
-      status: 'active',
-      planName: 'Plano Mensal MediQuo',
-      amount: 15.90,
-      startDate: '2025-08-11',
-      nextBillingDate: '2025-09-11',
-      paymentMethod: {
-        brand: 'Visa',
-        lastFourDigits: '4242'
-      }
-    } as SubscriptionDetails)
-
-    setPaymentHistory([
-      {
-        id: 'pay_1',
-        date: '2025-06-11',
-        amount: 15.90,
-        status: 'paid' as const,
-        invoiceUrl: '#'
-      },
-      {
-        id: 'pay_2',
-        date: '2025-07-11',
-        amount: 15.90,
-        status: 'paid' as const,
-        invoiceUrl: '#'
-      }
-    ])
-
-    setIsLoading(false)
-  }, [isAuthenticated, signupData])
+    loadSubscriptionData()
+  }, [isAuthenticated, router])
 
   const loadSubscriptionData = async () => {
-    // if (!signupData?.subscriptionId) return
-    return // Temporário
+    setIsLoading(true)
+    setError('')
 
-    // setIsLoading(true)
-    // setError('')
+    try {
+      // Buscar dados da assinatura recorrente
+      logger.authFlow('Loading subscription data')
+      const result = await getCurrentUserRecurrency()
 
-    // try {
-    //   // Carregar detalhes da assinatura
-    //   const subResult = await getSubscriptionDetails('temp-id') // signupData.subscriptionId
-    //   if (subResult.success && subResult.data) {
-    //     setSubscription(subResult.data)
+      if (result.success && result.data) {
+        // Usuário tem assinatura ativa
+        setSubscription(result.data)
+        setLicenseCode(result.data.licenceCode)
+        
+        logger.authFlow('Subscription data loaded', {
+          hasLicense: !!result.data.licenceCode,
+          nextCharge: result.data.nextChargeDate,
+          externalPaymentId: result.data.externalPaymentId,
+          couponCode: result.data.couponCode
+        })
 
-    //     // Carregar histórico de pagamentos
-    //     const historyResult = await getPaymentHistory('temp-id') // signupData.subscriptionId
-    //     if (historyResult.success && historyResult.data) {
-    //       setPaymentHistory(historyResult.data)
-    //     }
-    //   } else {
-    //     setError('Erro ao carregar dados da assinatura')
-    //   }
-    // } catch (error) {
-    //   logger.error('Error loading subscription data', error)
-    //   setError('Erro ao carregar informações da assinatura')
-    // } finally {
-    //   setIsLoading(false)
-    // }
+        // Carregar histórico de pagamentos usando o externalPaymentId
+        if (result.data.externalPaymentId) {
+          try {
+            const paymentsResult = await getPaymentsByExternalPaymentId(result.data.externalPaymentId)
+            if (paymentsResult.success && paymentsResult.data) {
+              // Ordenar por data de pagamento decrescente
+              const sortedPayments = [...paymentsResult.data].sort((a, b) => {
+                const dateA = new Date(a.paymentAt || a.createdAt).getTime()
+                const dateB = new Date(b.paymentAt || b.createdAt).getTime()
+                return dateB - dateA // Ordem decrescente
+              })
+              setPaymentHistory(sortedPayments)
+            }
+          } catch (historyError) {
+            logger.error('Error loading payment history', historyError)
+            // Não é crítico, apenas log
+          }
+        }
+      } else {
+        // Usuário não tem assinatura ativa - redirecionar para checkout
+        logger.authFlow('No active subscription found, redirecting to checkout')
+        router.push('/cliente/checkout')
+        return
+      }
+    } catch (error) {
+      logger.error('Error loading subscription data', error)
+      
+      // Se o erro for 404 (não tem assinatura), redirecionar para checkout
+      if (error instanceof Error && (error.message.includes('404') || error.message.includes('Nenhuma assinatura'))) {
+        logger.authFlow('No subscription found (404), redirecting to checkout')
+        router.push('/cliente/checkout')
+        return
+      }
+      
+      // Outros erros, mostrar mensagem
+      setError('Erro ao carregar informações da assinatura. Tente novamente.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleCancelSubscription = async () => {
-    // if (!signupData?.subscriptionId) return
-    return // Temporário
-
+    setIsCancelling(true)
+    setError('')
+    
+    try {
+      logger.authFlow('User initiated subscription cancellation')
+      
+      const result = await cancelCurrentUserRecurrency()
+      
+      if (result.success) {
+        // Sucesso no cancelamento
+        logger.authFlow('Subscription cancelled successfully')
+        
+        toast({
+          title: "Assinatura cancelada",
+          description: result.message || "Sua assinatura foi cancelada com sucesso. Você ainda tem acesso até o final do período pago.",
+        })
+        
+        // Aguardar um momento para o usuário ver a mensagem e redirecionar
+        setTimeout(() => {
+          router.push('/cliente/checkout')
+        }, 3000)
+      } else {
+        // Erro no cancelamento
+        logger.authError('Failed to cancel subscription', { error: result.error })
+        
+        setError(result.error || 'Erro ao cancelar assinatura')
+        toast({
+          variant: "destructive",
+          title: "Erro ao cancelar",
+          description: result.error || "Não foi possível cancelar sua assinatura. Tente novamente.",
+        })
+      }
+    } catch (error) {
+      logger.error('Error cancelling subscription', error)
+      
+      const errorMessage = error instanceof Error ? error.message : 'Erro inesperado ao cancelar assinatura'
+      setError(errorMessage)
+      
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: errorMessage,
+      })
+    } finally {
+      setIsCancelling(false)
+      setShowCancelConfirm(false)
+    }
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    })
+  const formatDate = (dateString: string | null | undefined) => {
+    if (!dateString) return 'Data não disponível'
+    
+    try {
+      // Criar Date diretamente - suporta ISO 8601 com timezone
+      const date = new Date(dateString)
+      
+      // Verificar se a data é válida
+      if (isNaN(date.getTime())) {
+        return 'Data inválida'
+      }
+      
+      return date.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      })
+    } catch (error) {
+      logger.error('Error formatting date', { dateString, error })
+      return 'Data inválida'
+    }
   }
 
   const formatCurrency = (amount: number) => {
@@ -128,29 +187,17 @@ export default function AssinaturaPage() {
     }).format(amount)
   }
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'active':
-        return (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-            <CheckCircle className="h-4 w-4 mr-1" />
-            Ativa
-          </span>
-        )
-      case 'cancelled':
-        return (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
-            <XCircle className="h-4 w-4 mr-1" />
-            Cancelada
-          </span>
-        )
-      default:
-        return (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
-            {status}
-          </span>
-        )
+  const getStatusBadge = () => {
+    // Se tem assinatura, está ativa
+    if (subscription) {
+      return (
+        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+          <CheckCircle className="h-4 w-4 mr-1" />
+          Ativa
+        </span>
+      )
     }
+    return null
   }
 
   const copyLicenseCode = () => {
@@ -204,18 +251,25 @@ export default function AssinaturaPage() {
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span>Status da Assinatura</span>
-                  {getStatusBadge(subscription.status)}
+                  {getStatusBadge()}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-gray-600">Plano</p>
-                    <p className="font-semibold">{subscription.planName || 'Plano Mensal MediQuo'}</p>
+                    <p className="font-semibold">Plano Mensal MediQuo</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Valor mensal</p>
-                    <p className="font-semibold text-lg">{formatCurrency(subscription.amount)}</p>
+                    <p className="font-semibold text-lg">
+                      {formatCurrency(subscription.amount)}
+                      {subscription.couponCode && (
+                        <span className="text-sm text-green-600 ml-2">
+                          (Cupom: {subscription.couponCode})
+                        </span>
+                      )}
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Data de início</p>
@@ -228,7 +282,7 @@ export default function AssinaturaPage() {
                     <p className="text-sm text-gray-600">Próxima cobrança</p>
                     <p className="font-semibold flex items-center">
                       <Calendar className="h-4 w-4 mr-2 text-gray-500" />
-                      {subscription.status === 'active' ? formatDate(subscription.nextBillingDate) : '-'}
+                      {subscription ? formatDate(subscription.nextChargeDate) : '-'}
                     </p>
                   </div>
                 </div>
@@ -264,17 +318,15 @@ export default function AssinaturaPage() {
                   </div>
                 </div>
 
-                {subscription.paymentMethod && (
-                  <div className="pt-4 border-t">
-                    <p className="text-sm text-gray-600 mb-2">Forma de pagamento</p>
-                    <div className="flex items-center">
-                      <CreditCard className="h-5 w-5 mr-2 text-gray-500" />
-                      <span className="font-medium">
-                        {subscription.paymentMethod.brand || 'Cartão'} terminado em {subscription.paymentMethod.lastFourDigits || '****'}
-                      </span>
-                    </div>
+                <div className="pt-4 border-t">
+                  <p className="text-sm text-gray-600 mb-2">Forma de pagamento</p>
+                  <div className="flex items-center">
+                    <CreditCard className="h-5 w-5 mr-2 text-gray-500" />
+                    <span className="font-medium">
+                      Cartão de Crédito (Recorrência Mensal)
+                    </span>
                   </div>
-                )}
+                </div>
               </CardContent>
             </Card>
 
@@ -289,31 +341,44 @@ export default function AssinaturaPage() {
                     {paymentHistory.map((payment) => (
                       <div key={payment.id} className="flex items-center justify-between py-3 border-b last:border-0">
                         <div className="flex items-center space-x-3">
-                          {payment.status === 'paid' ? (
+                          {payment.checkoutStatusType === 'APPROVED' ? (
                             <CheckCircle className="h-5 w-5 text-green-600" />
-                          ) : payment.status === 'failed' ? (
+                          ) : payment.checkoutStatusType === 'FAILED' ? (
                             <XCircle className="h-5 w-5 text-red-600" />
                           ) : (
                             <AlertCircle className="h-5 w-5 text-yellow-600" />
                           )}
                           <div>
-                            <p className="font-medium">{formatDate(payment.date)}</p>
-                            <p className="text-sm text-gray-600">
-                              {payment.status === 'paid' ? 'Pago' : payment.status === 'failed' ? 'Falhou' : 'Pendente'}
-                            </p>
+                            <p className="font-medium">{formatDate(payment.paymentAt || payment.createdAt)}</p>
+                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                              <span>
+                                {payment.checkoutStatusType === 'APPROVED' ? 'Aprovado' : 
+                                 payment.checkoutStatusType === 'FAILED' ? 'Falhou' : 
+                                 payment.checkoutStatusType === 'PENDING' ? 'Pendente' : 
+                                 payment.checkoutStatusType === 'RECURRING' ? 'Recorrente' :
+                                 payment.checkoutStatusType}
+                              </span>
+                              {payment.paymentType && (
+                                <>
+                                  <span className="text-gray-400">•</span>
+                                  <span>
+                                    {payment.paymentType === 'CARD_CREDIT' ? 'Cartão de Crédito' :
+                                     payment.paymentType === 'CARD_CREDIT_RECURRENCY' ? 'Recorrência' :
+                                     payment.paymentType === 'CARD_DEBIT' ? 'Cartão de Débito' :
+                                     payment.paymentType === 'PIX' ? 'PIX' :
+                                     payment.paymentType}
+                                  </span>
+                                </>
+                              )}
+                            </div>
                           </div>
                         </div>
                         <div className="text-right">
                           <p className="font-semibold">{formatCurrency(payment.amount)}</p>
-                          {payment.invoiceUrl && (
-                            <a
-                              href={payment.invoiceUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-sm text-blue-600 hover:underline"
-                            >
-                              Ver recibo
-                            </a>
+                          {payment.nfeCode && (
+                            <p className="text-xs text-gray-500">
+                              NFe: {payment.nfeCode}
+                            </p>
                           )}
                         </div>
                       </div>
@@ -326,7 +391,7 @@ export default function AssinaturaPage() {
             </Card>
 
             {/* Ações */}
-            {subscription.status === 'active' && (
+            {subscription && (
               <Card>
                 <CardHeader>
                   <CardTitle>Gerenciar Assinatura</CardTitle>

@@ -62,3 +62,48 @@ export interface CouponsSearchParams {
   size?: number
   sort?: string[]
 }
+
+// ===================================================================
+// TIPOS DE VALIDAÇÃO DE CUPONS - V2 API
+// ===================================================================
+
+/**
+ * Tipos de cliente suportados pela API de cupons
+ */
+export enum CouponClientType {
+  ARAUJO = 'ARAUJO',
+  EMAGRECER = 'EMAGRECER',
+  VERO = 'VERO'
+}
+
+/**
+ * Request para validação de cupom
+ * Endpoint: POST /v2/coupons/validate
+ */
+export interface CouponValidationRequestDTO {
+  code: string // maxLength: 50, minLength: 0
+}
+
+/**
+ * Response da validação de cupom
+ * Retorna detalhes sobre o cupom validado
+ */
+export interface CouponValidationResponseDTO {
+  code: string
+  clientType: CouponClientType
+  discountPercentage: number
+  expirationDate: string // formato: date-time
+  valid: boolean
+  used: boolean
+  expired: boolean
+  message?: string
+}
+
+/**
+ * Wrapper para resposta da API de validação de cupom
+ */
+export interface CouponValidationResult {
+  success: boolean
+  data?: CouponValidationResponseDTO
+  error?: string
+}
