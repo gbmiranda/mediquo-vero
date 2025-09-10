@@ -62,13 +62,13 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white overflow-x-hidden">
       <SiteHeader />
       {/* Hero Section */}
       <section className="relative overflow-hidden text-white pt-24" style={{ backgroundColor: '#D63066' }}>
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 right-20 w-96 h-96 rounded-full blur-3xl" style={{ backgroundColor: '#F3953F' }}></div>
-          <div className="absolute bottom-20 left-20 w-96 h-96 rounded-full blur-3xl" style={{ backgroundColor: '#FFD31B' }}></div>
+          <div className="absolute top-20 right-20 w-48 h-48 md:w-96 md:h-96 rounded-full blur-3xl" style={{ backgroundColor: '#F3953F' }}></div>
+          <div className="absolute bottom-20 left-20 w-48 h-48 md:w-96 md:h-96 rounded-full blur-3xl" style={{ backgroundColor: '#FFD31B' }}></div>
         </div>
         <div className="container mx-auto px-4 py-20 md:py-28 relative z-10">
           <div className="max-w-6xl mx-auto">
@@ -93,15 +93,15 @@ export default function Home() {
         </div>
         <div className="hidden md:block absolute right-0 bottom-0 w-1/2 h-full">
           <div className="relative h-full flex items-end justify-center">
-            <div className="absolute top-20 right-20 w-64 h-64 rounded-full opacity-20 blur-3xl" style={{ backgroundColor: '#F3953F' }}></div>
-            <div className="absolute bottom-20 left-20 w-72 h-72 rounded-full opacity-20 blur-3xl" style={{ backgroundColor: '#FFD31B' }}></div>
+            <div className="absolute top-10 right-10 md:top-20 md:right-20 w-32 h-32 md:w-64 md:h-64 rounded-full opacity-20 blur-3xl" style={{ backgroundColor: '#F3953F' }}></div>
+            <div className="absolute bottom-10 left-10 md:bottom-20 md:left-20 w-36 h-36 md:w-72 md:h-72 rounded-full opacity-20 blur-3xl" style={{ backgroundColor: '#FFD31B' }}></div>
             <Image
               src="/foto-hero.png"
               alt="Mulher sorrindo enquanto usa o aplicativo MediQuo no celular para consulta médica online - Telemedicina 24 horas"
               title="Consulta médica online 24h - MediQuo + Vero"
               width={600}
               height={600}
-              className="relative z-10 object-contain object-bottom"
+              className="relative z-10 object-contain object-bottom w-full max-w-[600px] h-auto"
               priority
             />
           </div>
@@ -235,8 +235,7 @@ export default function Home() {
                   title="App MediQuo - Interface de consultas médicas online"
                   width={500}
                   height={800}
-                  className="drop-shadow-2xl max-w-none"
-                  style={{  height: '800px', width: 'auto' }}
+                  className="drop-shadow-2xl w-full max-w-[300px] md:max-w-[400px] h-auto"
                   loading="lazy"
                 />
               </div>
