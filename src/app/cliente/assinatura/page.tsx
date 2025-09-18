@@ -34,6 +34,8 @@ export default function AssinaturaPage() {
   const [error, setError] = useState('')
   const [showCancelConfirm, setShowCancelConfirm] = useState(false)
   const [licenseCode, setLicenseCode] = useState('') // Será preenchido com o código real
+  const [isPendingPayment, setIsPendingPayment] = useState(false)
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
   useEffect(() => {
     // Verificar autenticação
@@ -55,16 +57,35 @@ export default function AssinaturaPage() {
       const result = await getCurrentUserRecurrency()
 
       if (result.success && result.data) {
-        // Usuário tem assinatura ativa
-        setSubscription(result.data)
-        setLicenseCode(result.data.licenceCode)
-        
+        // Verificar o status da assinatura
+        const subscriptionStatus = result.data.status
+
         logger.authFlow('Subscription data loaded', {
+          status: subscriptionStatus,
           hasLicense: !!result.data.licenceCode,
           nextCharge: result.data.nextChargeDate,
           externalPaymentId: result.data.externalPaymentId,
           couponCode: result.data.couponCode
         })
+
+        // Se o status for PAID, exibir assinatura normalmente
+        if (subscriptionStatus === 'PAID') {
+          setSubscription(result.data)
+          setLicenseCode(result.data.licenceCode)
+          setIsPendingPayment(false)
+        }
+        // Se o status for PENDING, mostrar mensagem de pendência
+        else if (subscriptionStatus === 'PENDING') {
+          logger.authFlow('Payment is pending approval')
+          setIsPendingPayment(true)
+          setSubscription(result.data) // Guardar dados para exibir informações parciais
+        }
+        // Para qualquer outro status, redirecionar para checkout
+        else {
+          logger.authFlow('Invalid subscription status, redirecting to checkout', { status: subscriptionStatus })
+          router.push('/cliente/checkout')
+          return
+        }
 
         // Carregar histórico de pagamentos usando o externalPaymentId
         if (result.data.externalPaymentId) {
@@ -214,9 +235,28 @@ export default function AssinaturaPage() {
   const handleAccessMediquo = () => {
     // GA4: Evento de início de consulta
     gtag.beginConsultation('online')
-    
+
     // Aqui viria a lógica de redirecionamento ou abertura do app MediQuo
     // Por enquanto apenas logamos o evento
+  }
+
+  const handleRefreshStatus = async () => {
+    setIsRefreshing(true)
+    try {
+      await loadSubscriptionData()
+      toast({
+        title: "Status atualizado",
+        description: "Verificamos o status do seu pagamento.",
+      })
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Erro ao atualizar",
+        description: "Não foi possível verificar o status. Tente novamente.",
+      })
+    } finally {
+      setIsRefreshing(false)
+    }
   }
 
   if (isLoading) {
@@ -244,7 +284,50 @@ export default function AssinaturaPage() {
           </Alert>
         )}
 
-        {subscription && (
+        {/* Mensagem para pagamento pendente */}
+        {isPendingPayment && (
+          <Card className="mb-6 border-yellow-200 bg-yellow-50">
+            <CardHeader>
+              <CardTitle className="flex items-center text-yellow-800">
+                <AlertCircle className="h-5 w-5 mr-2" />
+                Pagamento em Processamento
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-yellow-700 mb-4">
+                Seu pagamento está sendo processado pela operadora do cartão.
+                Este processo pode levar alguns minutos. Você será notificado assim que for aprovado.
+              </p>
+              <div className="space-y-3">
+                <div className="bg-white p-3 rounded-lg border border-yellow-200">
+                  <p className="text-sm font-medium text-gray-700">O que fazer agora?</p>
+                  <ul className="mt-2 space-y-1 text-sm text-gray-600">
+                    <li>• Aguarde a aprovação do pagamento</li>
+                    <li>• Verifique seu e-mail para atualizações</li>
+                    <li>• Você pode fechar esta página e voltar mais tarde</li>
+                  </ul>
+                </div>
+                <Button
+                  onClick={handleRefreshStatus}
+                  disabled={isRefreshing}
+                  variant="outline"
+                  className="w-full"
+                >
+                  {isRefreshing ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Verificando status...
+                    </>
+                  ) : (
+                    <>Verificar status novamente</>
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {subscription && !isPendingPayment && (
           <>
             {/* Status da Assinatura */}
             <Card className="mb-6">

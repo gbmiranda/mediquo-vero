@@ -29,7 +29,7 @@ export async function getCurrentUserRecurrency(): Promise<RecurrencyApiResponse>
   try {
     const token = getToken()
     if (!token) {
-      logger.authError('No token found for recurrency check')
+      logger.authError('No token found for recurrency check', null)
       throw new Error('Token não encontrado. Faça login novamente.')
     }
 
@@ -54,7 +54,7 @@ export async function getCurrentUserRecurrency(): Promise<RecurrencyApiResponse>
 
     // Se retornar 401, token inválido
     if (response.status === 401) {
-      logger.authError('Unauthorized access to recurrency endpoint')
+      logger.authError('Unauthorized access to recurrency endpoint', { status: 401 })
       return {
         success: false,
         error: 'Sessão expirada. Faça login novamente.'
@@ -126,7 +126,7 @@ export async function getPaymentsByExternalPaymentId(externalPaymentId: string):
   try {
     const token = getToken()
     if (!token) {
-      logger.authError('No token found for fetching payments')
+      logger.authError('No token found for fetching payments', null)
       throw new Error('Token não encontrado. Faça login novamente.')
     }
 
@@ -151,7 +151,7 @@ export async function getPaymentsByExternalPaymentId(externalPaymentId: string):
 
     // Se retornar 401, token inválido
     if (response.status === 401) {
-      logger.authError('Unauthorized access to payments endpoint')
+      logger.authError('Unauthorized access to payments endpoint', { status: 401 })
       return {
         success: false,
         error: 'Sessão expirada. Faça login novamente.'
@@ -197,7 +197,7 @@ export async function cancelCurrentUserRecurrency(): Promise<CancelRecurrencyRes
   try {
     const token = getToken()
     if (!token) {
-      logger.authError('No token found for recurrency cancellation')
+      logger.authError('No token found for recurrency cancellation', null)
       return {
         success: false,
         error: 'Token não encontrado. Faça login novamente.'
@@ -216,7 +216,7 @@ export async function cancelCurrentUserRecurrency(): Promise<CancelRecurrencyRes
 
     // Se retornar 401, token inválido
     if (response.status === 401) {
-      logger.authError('Unauthorized access to cancel recurrency endpoint')
+      logger.authError('Unauthorized access to cancel recurrency endpoint', { status: 401 })
       return {
         success: false,
         error: 'Sessão expirada. Faça login novamente.'
@@ -234,7 +234,7 @@ export async function cancelCurrentUserRecurrency(): Promise<CancelRecurrencyRes
 
     // Se retornar 409, pode haver conflito
     if (response.status === 409) {
-      logger.authError('Conflict while cancelling recurrency')
+      logger.authError('Conflict while cancelling recurrency', { status: 409 })
       return {
         success: false,
         error: 'Não foi possível cancelar a assinatura. Tente novamente mais tarde.'
@@ -267,7 +267,7 @@ export async function cancelCurrentUserRecurrency(): Promise<CancelRecurrencyRes
     }
 
     // Para outros códigos de erro
-    logger.authError(`Failed to cancel recurrency: ${response.status}`)
+    logger.authError(`Failed to cancel recurrency: ${response.status}`, { status: response.status })
     
     return {
       success: false,

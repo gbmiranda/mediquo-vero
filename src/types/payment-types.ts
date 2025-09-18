@@ -18,6 +18,7 @@ export interface PaymentRecurrencyResponseDTO {
   startDate: string // formato: "YYYY-MM-DD"
   nextChargeDate: string // formato: "YYYY-MM-DD"
   couponCode?: string // Código do cupom aplicado (se houver)
+  status: 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED' | 'CANCELLED' // Status da assinatura
 }
 
 /**
