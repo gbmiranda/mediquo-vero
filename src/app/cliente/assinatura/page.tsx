@@ -180,16 +180,24 @@ export default function AssinaturaPage() {
 
   const formatDate = (dateString: string | null | undefined) => {
     if (!dateString) return 'Data não disponível'
-    
+
     try {
-      // Criar Date diretamente - suporta ISO 8601 com timezone
-      const date = new Date(dateString)
-      
+      let date: Date
+
+      // Se é formato YYYY-MM-DD (date only), parsear manualmente para evitar problemas de timezone
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+        const [year, month, day] = dateString.split('-').map(Number)
+        date = new Date(year, month - 1, day) // month é 0-indexed no JavaScript
+      } else {
+        // Para outros formatos (com timestamp/timezone), usar construtor normal
+        date = new Date(dateString)
+      }
+
       // Verificar se a data é válida
       if (isNaN(date.getTime())) {
         return 'Data inválida'
       }
-      
+
       return date.toLocaleDateString('pt-BR', {
         day: '2-digit',
         month: '2-digit',
@@ -322,6 +330,53 @@ export default function AssinaturaPage() {
                     <>Verificar status novamente</>
                   )}
                 </Button>
+
+                {/* Botão de cancelar assinatura */}
+                <div className="pt-2 border-t border-yellow-200">
+                  {!showCancelConfirm ? (
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowCancelConfirm(true)}
+                      className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                    >
+                      Cancelar Assinatura
+                    </Button>
+                  ) : (
+                    <div className="space-y-3">
+                      <Alert className="border-red-200 bg-red-50">
+                        <AlertCircle className="h-4 w-4 text-red-600" />
+                        <AlertDescription className="text-red-800">
+                          Tem certeza que deseja cancelar esta assinatura? O pagamento pendente será cancelado.
+                        </AlertDescription>
+                      </Alert>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="destructive"
+                          onClick={handleCancelSubscription}
+                          disabled={isCancelling}
+                          className="flex-1"
+                        >
+                          {isCancelling ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Cancelando...
+                            </>
+                          ) : (
+                            'Confirmar'
+                          )}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowCancelConfirm(false)}
+                          disabled={isCancelling}
+                          className="flex-1"
+                        >
+                          Voltar
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
