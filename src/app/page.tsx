@@ -1,19 +1,19 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { SiteHeader } from '@/components/site-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { SiteHeader } from '@/components/site-header';
-import Image from 'next/image';
 import {
   Check,
-  Shield,
   ChevronDown,
   Heart,
   PawPrint,
+  Shield,
   Star
 } from 'lucide-react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function Home() {
   const [openFAQ, setOpenFAQ] = useState<number | null>(null);
@@ -74,10 +74,10 @@ export default function Home() {
           <div className="max-w-6xl mx-auto">
             <div className="md:w-1/2">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-6" style={{ color: '#FFD31B' }}>
-                Sua saúde na palma da mão: fale com médicos em até 10 minutos
+                Cuidar de você, da sua família e do seu pet nunca foi tão fácil, rápido e acessível.
               </h1>
               <p className="text-lg md:text-xl mb-8 text-white/90">
-                Cuidar de você, da sua família e do seu pet nunca foi tão fácil, rápido e acessível.
+                Experimente os 30 primeiros dias grátis.
               </p>
 
               <Button
@@ -86,7 +86,7 @@ export default function Home() {
                 style={{ backgroundColor: '#FFD31B' }}
                 onClick={handleCTAClick}
               >
-                QUERO COMEÇAR AGORA
+                Experimentar Grátis
               </Button>
             </div>
           </div>
@@ -346,13 +346,18 @@ export default function Home() {
               <CardContent className="p-8">
                 <div className="text-center mb-6">
                   <h3 className="text-2xl font-bold mb-4" style={{ color: '#D63066' }}>Mensal</h3>
-                  <p className="text-gray-700 mb-6">Médicos + todas as especialidades</p>
                   <div className="flex items-baseline justify-center gap-1">
                     <span className="text-5xl font-bold text-gray-900">R$15,90</span>
                   </div>
                 </div>
 
                 <div className="space-y-3 mb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#D6306620' }}>
+                      <Check className="h-4 w-4" style={{ color: '#D63066' }} />
+                    </div>
+                    <span className="text-gray-700">30 dias gratuito</span>
+                  </div>
                   <div className="flex items-center gap-3">
                     <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#D6306620' }}>
                       <Check className="h-4 w-4" style={{ color: '#D63066' }} />
@@ -378,9 +383,9 @@ export default function Home() {
                   style={{ backgroundColor: '#FFD31B' }}
                   onClick={() => router.push('/cliente/checkout')}
                 >
-                  Assinar agora
+                  Comece seu teste gratuito hoje
                 </Button>
-                <p className="text-center text-sm text-gray-600 mt-3">Quero meu acesso agora</p>
+                <p className="text-center text-sm text-gray-600 mt-3">A melhor forma de conhecer é testar. 30 dias por nossa conta.</p>
               </CardContent>
             </Card>
           </div>
@@ -395,7 +400,7 @@ export default function Home() {
               Perguntas Frequentes (FAQ)
             </h2>
             <p className="text-center text-white/80 mb-12">
-              Posso incluir mais de um filho?<br/>
+              Posso incluir mais de um filho?<br />
               Sim! Sem limites e sem custo adicional.
             </p>
             <div className="space-y-4">
