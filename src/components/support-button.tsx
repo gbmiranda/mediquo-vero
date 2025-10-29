@@ -4,7 +4,7 @@ import React from 'react'
 
 export default function SupportButton() {
   const handleSupportClick = () => {
-    window.open('https://mediquo5639.zendesk.com/hc/pt-br/requests/new?ticket_form_id=36518462068884', '_blank')
+    window.open('https://suportemediquo.netlify.app/formularios/vero', '_blank')
   }
 
   return (
